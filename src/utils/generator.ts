@@ -1,3 +1,4 @@
+/* eslint-disable style/brace-style */
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
@@ -61,8 +62,7 @@ export class ProjectGenerator {
       console.log(`✅ 项目 ${this.projectName} 创建成功！`)
       console.log(`📁 目录: ${this.projectPath}`)
       console.log(`💡 下一步: cd ${this.projectName} && pnpm install`)
-    }
-    catch (error) {
+    } catch (error) {
       // 出错时清理已创建的目录
       if (await fs.pathExists(this.projectPath)) {
         await fs.remove(this.projectPath)

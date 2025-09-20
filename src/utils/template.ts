@@ -1,3 +1,6 @@
+/* eslint-disable style/arrow-parens */
+/* eslint-disable antfu/if-newline */
+/* eslint-disable style/brace-style */
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import ejs from 'ejs'
@@ -48,11 +51,7 @@ export class TemplateHandler {
   /**
    * 复制模板文件到目标路径
    */
-  public async copyTemplate(
-    sourceDir: string,
-    targetDir: string,
-    data?: Record<string, any>,
-  ): Promise<void> {
+  public async copyTemplate(sourceDir: string, targetDir: string, data?: Record<string, any>): Promise<void> {
     // 确保目标目录存在
     await fs.ensureDir(targetDir)
 
@@ -67,15 +66,13 @@ export class TemplateHandler {
       if (stats.isDirectory()) {
         // 递归复制子目录
         await this.copyTemplate(sourcePath, targetPath, data)
-      }
-      else if (file.endsWith('.ejs')) {
+      } else if (file.endsWith('.ejs')) {
         // 渲染EJS模板
         const renderedContent = await this.renderTemplate(sourcePath, data || {})
         // 移除.ejs扩展名
         const actualTargetPath = targetPath.replace('.ejs', '')
         await fs.writeFile(actualTargetPath, renderedContent, 'utf-8')
-      }
-      else {
+      } else {
         // 直接复制文件
         await fs.copyFile(sourcePath, targetPath)
       }
@@ -88,11 +85,10 @@ export class TemplateHandler {
   public async getSupportedUiLibraries(): Promise<string[]> {
     const uiTemplatesDir = path.join(this.templateRoot, 'ui-templates')
     const exists = await fs.pathExists(uiTemplatesDir)
-    if (!exists)
-      return []
+    if (!exists) return []
 
     const dirs = await fs.readdir(uiTemplatesDir)
-    return dirs.filter(async (dir) => {
+    return dirs.filter(async dir => {
       const dirPath = path.join(uiTemplatesDir, dir)
       const stats = await fs.stat(dirPath)
       return stats.isDirectory()

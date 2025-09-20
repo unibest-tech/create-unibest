@@ -1,3 +1,5 @@
+/* eslint-disable style/brace-style */
+/* eslint-disable style/operator-linebreak */
 import type minimist from 'minimist'
 import { color } from '../utils/color'
 import { ProjectGenerator } from '../utils/generator'
@@ -24,15 +26,16 @@ export async function createCommand(args: minimist.ParsedArgs): Promise<void> {
     const supportedUiLibraries = await templateHandler.getSupportedUiLibraries()
 
     // 如果没有预定义的参数，则询问用户
-    const uiLibrary = args.ui || args['ui-library'] || await promptHandler.askUiLibrary(supportedUiLibraries)
+    const uiLibrary = args.ui || args['ui-library'] || (await promptHandler.askUiLibrary(supportedUiLibraries))
 
     // 优化：默认使用TypeScript，只有显式指定js参数时才使用JavaScript
     // 如果未指定js参数，则询问用户
-    const useJs = (args.js !== undefined || args.javascript !== undefined) ? 
-      (args.js || args.javascript) : 
-      await promptHandler.askUseJs()
+    const useJs =
+      args.js !== undefined || args.javascript !== undefined
+        ? args.js || args.javascript
+        : await promptHandler.askUseJs()
 
-    const useI18n = args.i18n ?? await promptHandler.askUseI18n()
+    const useI18n = args.i18n ?? (await promptHandler.askUseI18n())
 
     console.log('项目配置:')
     console.log(`  📦 项目名称: ${projectName}`)
@@ -54,8 +57,7 @@ export async function createCommand(args: minimist.ParsedArgs): Promise<void> {
     })
 
     await generator.generate()
-  }
-  catch (error) {
+  } catch (error) {
     console.error(color.red(`创建项目失败: ${error instanceof Error ? error.message : String(error)}`))
   }
 }

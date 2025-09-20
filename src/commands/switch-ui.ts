@@ -1,3 +1,4 @@
+/* eslint-disable style/brace-style */
 import type minimist from 'minimist'
 import path from 'node:path'
 import process from 'node:process'
@@ -49,9 +50,7 @@ export async function switchUiCommand(args: minimist.ParsedArgs): Promise<void> 
 
     try {
       // 5. 移除可能存在的旧UI库文件
-      const uiDirsToRemove = supportedUiLibraries.map(ui =>
-        path.join(currentDir, 'src', 'components', `ui-${ui}`),
-      )
+      const uiDirsToRemove = supportedUiLibraries.map(ui => path.join(currentDir, 'src', 'components', `ui-${ui}`))
 
       for (const dir of uiDirsToRemove) {
         if (await fs.pathExists(dir)) {
@@ -81,8 +80,7 @@ export async function switchUiCommand(args: minimist.ParsedArgs): Promise<void> 
 
       console.log(color.green(`✅ UI库已成功切换到: ${targetUi}`))
       console.log(color.yellow('💡 建议运行 pnpm install 来安装新的依赖'))
-    }
-    catch (error) {
+    } catch (error) {
       // 出错时恢复package.json
       if (await fs.pathExists(backupPackageJson)) {
         await fs.copyFile(backupPackageJson, path.join(currentDir, 'package.json'))
@@ -90,8 +88,7 @@ export async function switchUiCommand(args: minimist.ParsedArgs): Promise<void> 
       }
       throw error
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.error(color.red(`切换UI库失败: ${error instanceof Error ? error.message : String(error)}`))
   }
 }

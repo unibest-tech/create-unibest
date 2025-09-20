@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsup'
 
 export default defineConfig({
   entry: ['src/index.ts'],
@@ -7,5 +7,5 @@ export default defineConfig({
   target: 'esnext',
   clean: true,
   sourcemap: false,
-  dts: true
-});
+  dts: true,
+})

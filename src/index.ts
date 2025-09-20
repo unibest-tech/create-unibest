@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable style/brace-style */
 import process from 'node:process'
 import minimist from 'minimist'
 import { addI18nCommand } from './commands/add-i18n'
@@ -50,8 +51,7 @@ async function printVersion() {
   try {
     const pkg = await import('../package.json')
     console.log(pkg.default.version)
-  }
-  catch (error) {
+  } catch (error) {
     console.log('1.0.0')
   }
 }
