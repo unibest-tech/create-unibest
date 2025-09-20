@@ -1,0 +1,33 @@
+{
+  "name": "unibest-cli",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "快速创建unibest项目的脚手架工具",
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "main": "index.js",
+  "bin": {
+    "unibest": "bin/index.js"
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "fs-extra": "^11.3.0",
+    "kolorist": "^1.8.0",
+    "minimist": "^1.2.8",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/minimist": "^1.2.5",
+    "@types/node": "^24.5.0",
+    "@types/prompts": "^2.4.9",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.0"
+  }
+}
