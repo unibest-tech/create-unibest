@@ -8,7 +8,7 @@
   "keywords": [],
   "main": "index.js",
   "bin": {
-    "unibest": "bin/index.js"
+    "best": "bin/index.js"
   },
   "scripts": {
     "dev": "tsup --watch",

@@ -2,9 +2,7 @@
 /* eslint-disable style/brace-style */
 import process from 'node:process'
 import minimist from 'minimist'
-import { addI18nCommand } from './commands/add-i18n'
 import { createCommand } from './commands/create'
-import { switchUiCommand } from './commands/switch-ui'
 import { printHelp } from './utils/help'
 
 /**
@@ -13,17 +11,19 @@ import { printHelp } from './utils/help'
 function main() {
   const args = minimist(process.argv.slice(2))
   const command = args._[0]
+  console.log('command:', command)
+  console.log('args:', args)
+
+  // 首先检查版本相关的选项
+  if (args.v || args.version) {
+    printVersion()
+    return
+  }
 
   // 根据命令执行不同的功能
   switch (command) {
     case 'create':
       createCommand(args)
-      break
-    case 'switch-ui':
-      switchUiCommand(args)
-      break
-    case 'add-i18n':
-      addI18nCommand(args)
       break
     case 'help':
     case '-h':
@@ -31,8 +31,6 @@ function main() {
       printHelp()
       break
     case 'version':
-    case '-v':
-    case '--version':
       printVersion()
       break
     default:

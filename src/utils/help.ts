@@ -11,8 +11,6 @@ export function printHelp(): void {
   console.log('')
   console.log(color.blue('命令:'))
   console.log('  create <project-name>  创建新的unibest项目')
-  console.log('  switch-ui <ui-library>  切换项目的UI库')
-  console.log('  add-i18n               为项目添加i18n支持')
   console.log('  help                   显示帮助信息')
   console.log('  version                显示版本信息')
   console.log('')
@@ -25,5 +23,5 @@ export function printHelp(): void {
   console.log(color.blue('示例:'))
   console.log('  unibest create my-project')
   console.log('  unibest create my-project --ui uv-ui --ts --i18n')
-  console.log('  unibest create my-project --ui wot-design-uni --js')
+  console.log('  unibest create my-project --ui wot-ui --js')
 }

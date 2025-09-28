@@ -6,6 +6,6 @@ export default defineConfig({
   format: ['esm'],
   target: 'esnext',
   clean: true,
-  sourcemap: false,
+  sourcemap: true, // TODO: 发布请修改为 false
   dts: true,
 })
