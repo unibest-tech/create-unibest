@@ -1,8 +1,7 @@
 import { text, multiselect, select, confirm, cancel, isCancel } from '@clack/prompts';
-import { logger } from '../utils/logger';
-import type { PromptResult, Platform, UILibrary, RequestLibrary } from '../types';
-import { checkProjectNameExistAndValidate } from './validate';
-
+import { logger } from '../../utils/logger';
+import type { PromptResult, Platform, UILibrary, RequestLibrary, FormatPlugin } from '../../types';
+import { checkProjectNameExistAndValidate } from '../../utils/validate';
 
 /**
  * 交互式询问用户项目配置
@@ -36,8 +35,6 @@ export async function promptUser(
 
       projectName = inputProjectName;
     }
-
-
 
     // 2. 选择UI库（单选）
     const uiLibrary = await select({
@@ -76,7 +73,6 @@ export async function promptUser(
       cancel('操作已取消');
       process.exit(0);
     }
-
 
     // 4. 是否启用多语言（确认）
     const i18n = await confirm({
@@ -119,14 +115,30 @@ export async function promptUser(
       process.exit(0);
     }
 
+    // 7. 格式化插件选择
+    const formatPlugin = await select({
+      message: '格式化插件选择',
+      options: [
+        { value: 'oxclint', label: 'Oxclint + Prettier + Stylelint' },
+        { value: 'eslint', label: 'ESLint' },
+      ],
+      initialValue: 'oxclint'
+    });
+
+    // 处理用户取消操作
+    if (isCancel(formatPlugin)) {
+      cancel('操作已取消');
+      process.exit(0);
+    }
 
     return {
       projectName,
-      platforms,
-      uiLibrary,
-      requestLibrary,
+      uiLibrary: uiLibrary as UILibrary,
+      platforms: platforms as Platform[],
       i18n,
-      loginStrategy
+      requestLibrary: requestLibrary as RequestLibrary,
+      loginStrategy,
+      formatPlugin: formatPlugin as FormatPlugin,
     };
   } catch (error) {
     logger.error(`询问过程出错: ${(error as Error).message}`);

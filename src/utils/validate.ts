@@ -1,5 +1,6 @@
 import { logger } from './logger';
 import { existsSync } from 'fs';
+import { yellow } from 'kolorist';
 import { join } from 'path';
 
 /**
@@ -24,12 +25,13 @@ export function validateProjectName(name: string): boolean {
  * @param projectName - 项目名称
  * @returns 错误信息或undefined
  */
-export function checkProjectNameExistAndValidate(projectName: string): string {
+export function checkProjectNameExistAndValidate(_projectName: string): string {
+  const projectName = _projectName.trim();
   if (existsSync(join(process.cwd(), projectName))) {
-    return '目录已存在，请选择其他名称';
+    return `目录 ${yellow(projectName)} 已存在，请选择其他名称`;
   }
   if (!validateProjectName(projectName)) {
-    return '项目名称不符合规范，请使用字母、数字、连字符或下划线';
+    return `项目名称 ${yellow(projectName)} 不符合规范，请使用字母、数字、连字符或下划线`;
   }
   return '';
 }

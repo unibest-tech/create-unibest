@@ -1,12 +1,11 @@
 /* eslint-disable style/brace-style */
 /* eslint-disable style/operator-linebreak */
 import type minimist from 'minimist'
-import { generateProject } from './generator/index';
-import { logger } from '../utils/logger'
-import { promptUser, } from '../utils/prompts'
+import { promptUser, } from './create/prompts'
+import { generateProject } from './create/generate';
 import { version } from '../../package.json'
-import { intro, } from '@clack/prompts';
-import { bold, yellow, green } from 'kolorist';
+import { intro, log } from '@clack/prompts';
+import { bold, yellow, green, } from 'kolorist';
 import getUnibestVersion from '../utils/unibestVersion';
 import { checkProjectNameExistAndValidate } from '../utils/validate';
 
@@ -20,12 +19,11 @@ export async function createCommand(args: minimist.ParsedArgs): Promise<void> {
 
   intro(bold(green(`create-unibest@v${version} 快速创建 ${yellow(`unibest@v${versionUnibest}`)} 项目`)));
 
-
   // 验证项目名称
   if (projectName) {
     const errorMessage = checkProjectNameExistAndValidate(projectName);
     if (errorMessage) {
-      logger.error(errorMessage);
+      log.error(errorMessage);
       process.exit(1);
     }
   }
@@ -37,9 +35,9 @@ export async function createCommand(args: minimist.ParsedArgs): Promise<void> {
     // 生成项目
     await generateProject(projectOptions);
 
-    logger.success('项目创建成功！');
+    log.success('项目创建成功！');
   } catch (error) {
-    logger.error(`创建项目失败: ${(error as Error).message}`);
+    log.error(`创建项目失败: ${(error as Error).message}`);
     process.exit(1);
   }
 }
