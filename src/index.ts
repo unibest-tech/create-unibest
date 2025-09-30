@@ -3,9 +3,12 @@ import process from 'node:process'
 import minimist from 'minimist'
 import { createCommand } from './commands/create'
 import { printHelp } from './utils/help'
-import { color } from './utils/color'
 import { debug } from './utils/debug' // 导入我们的debug工具函数
-
+import getUnibestVersion from './utils/unibestVersion'
+import { version } from '../package.json'
+import { color } from './utils/color'
+import { green, red } from 'kolorist'
+import { yellow } from 'kolorist'
 /**
  * unibest-cli 主入口函数
  */
@@ -48,10 +51,12 @@ function main() {
  */
 async function printVersion() {
   try {
-    const pkg = await import('../package.json')
-    console.log(color.green(pkg.default.version))
+    const unibestVersion = await getUnibestVersion()
+    console.log(green(`create-unibest: `) + yellow(version))
+    console.log(green(`unibest: `) + yellow(unibestVersion || '1.0.0'))
+    console.log('')
   } catch (error) {
-    console.log(color.red('1.0.0'))
+    console.log(red('1.0.0'))
   }
 }
 
