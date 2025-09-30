@@ -4,6 +4,7 @@ import process from 'node:process'
 import minimist from 'minimist'
 import { createCommand } from './commands/create'
 import { printHelp } from './utils/help'
+const IS_DEV = process.env.NODE_ENV === 'development'
 
 /**
  * unibest-cli 主入口函数
@@ -11,8 +12,8 @@ import { printHelp } from './utils/help'
 function main() {
   const args = minimist(process.argv.slice(2))
   const command = args._[0]
-  console.log('command:', command)
-  console.log('args:', args)
+  IS_DEV && console.log('command:', command)
+  IS_DEV && console.log('args:', args)
 
   // 首先检查版本相关的选项
   if (args.v || args.version) {
