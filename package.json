@@ -11,9 +11,9 @@
     "best": "bin/index.js"
   },
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsup",
-    "prepare": "npm run build"
+    "dev": "NODE_ENV=development tsup --watch",
+    "build": "NODE_ENV=production tsup",
+    "prepare": "NODE_ENV=production npm run build"
   },
   "dependencies": {
     "ejs": "^3.1.10",
