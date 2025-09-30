@@ -1,8 +1,8 @@
 import { text, multiselect, select, confirm, cancel, isCancel } from '@clack/prompts';
-import { existsSync } from 'fs';
-import { join } from 'path';
 import { logger } from '../utils/logger';
 import type { PromptResult, Platform, UILibrary, RequestLibrary } from '../types';
+import { checkProjectNameExistAndValidate } from './validate';
+
 
 /**
  * 交互式询问用户项目配置
@@ -19,12 +19,11 @@ export async function promptUser(
     if (!projectName) {
       const inputProjectName = await text({
         message: '请输入项目名称',
-        initialValue: 'unibest-project',
+        initialValue: '',
         validate: (value) => {
           if (!value.trim()) return '项目名称不能为空';
-          if (existsSync(join(process.cwd(), value))) {
-            return '目录已存在，请选择其他名称';
-          }
+          const errorMessage = checkProjectNameExistAndValidate(value);
+          if (errorMessage) return errorMessage;
           return;
         }
       });
@@ -38,7 +37,27 @@ export async function promptUser(
       projectName = inputProjectName;
     }
 
-    // 2. 选择平台（多选）
+
+
+    // 2. 选择UI库（单选）
+    const uiLibrary = await select({
+      message: '请选择UI库',
+      options: [
+        { value: 'wot-ui', label: 'wot-ui' },
+        { value: 'sard-uniapp', label: 'sard-uniapp' },
+        { value: 'uv-ui', label: 'uv-ui' },
+        { value: 'uview-plus', label: 'uview-plus' }
+      ],
+      initialValue: 'wot-ui'
+    });
+
+    // 处理用户取消操作
+    if (isCancel(uiLibrary)) {
+      cancel('操作已取消');
+      process.exit(0);
+    }
+
+    // 3. 选择平台（多选）
     const platforms = await multiselect({
       message: '请选择需要支持的平台（多选）',
       options: [
@@ -58,44 +77,10 @@ export async function promptUser(
       process.exit(0);
     }
 
-    // 3. 选择UI库（单选）
-    const uiLibrary = await select({
-      message: '请选择UI库',
-      options: [
-        { value: 'wot-ui', label: 'wot-ui' },
-        { value: 'sard-uniapp', label: 'sard-uniapp' },
-        { value: 'uv-ui', label: 'uv-ui' },
-        { value: 'uview-plus', label: 'uview-plus' }
-      ],
-      initialValue: 'wot-ui'
-    });
 
-    // 处理用户取消操作
-    if (isCancel(uiLibrary)) {
-      cancel('操作已取消');
-      process.exit(0);
-    }
-
-    // 4. 选择请求库（单选）
-    const requestLibrary = await select({
-      message: '请选择请求库',
-      options: [
-        { value: 'useRequest', label: '内置useRequest' },
-        { value: 'alovajs', label: 'alovajs' },
-        { value: 'vue-query', label: 'vue-query' }
-      ],
-      initialValue: 'useRequest'
-    });
-
-    // 处理用户取消操作
-    if (isCancel(requestLibrary)) {
-      cancel('操作已取消');
-      process.exit(0);
-    }
-
-    // 5. 是否启用多语言（确认）
+    // 4. 是否启用多语言（确认）
     const i18n = await confirm({
-      message: '是否需要多语言支持？',
+      message: '是否需要多语言i18n？',
       initialValue: false
     });
 
@@ -105,12 +90,43 @@ export async function promptUser(
       process.exit(0);
     }
 
+    // 5. 选择请求库（单选）
+    const requestLibrary = await select({
+      message: '请选择请求库',
+      options: [
+        { value: 'request', label: '菲鸽封装' },
+        { value: 'alovajs', label: 'alovajs' },
+        { value: 'vue-query', label: 'vue-query' }
+      ],
+      initialValue: 'request'
+    });
+
+    // 处理用户取消操作
+    if (isCancel(requestLibrary)) {
+      cancel('操作已取消');
+      process.exit(0);
+    }
+
+    // 6. 是否需要”登录策略“
+    const loginStrategy = await confirm({
+      message: '是否需要登录策略？',
+      initialValue: false
+    });
+
+    // 处理用户取消操作
+    if (isCancel(loginStrategy)) {
+      cancel('操作已取消');
+      process.exit(0);
+    }
+
+
     return {
       projectName,
-      platforms: platforms as Platform[],
-      uiLibrary: uiLibrary as UILibrary,
-      requestLibrary: requestLibrary as RequestLibrary,
-      i18n: i18n as boolean,
+      platforms,
+      uiLibrary,
+      requestLibrary,
+      i18n,
+      loginStrategy
     };
   } catch (error) {
     logger.error(`询问过程出错: ${(error as Error).message}`);

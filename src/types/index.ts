@@ -21,13 +21,14 @@ export type Platform = 'mp-weixin' | 'h5' | 'app' | 'mp-alipay' | 'mp-toutiao';
 export type UILibrary = 'wot-ui' | 'sard-uniapp' | 'uv-ui' | 'uview-plus';
 
 /** 支持的请求库类型 */
-export type RequestLibrary = 'useRequest' | 'alovajs' | 'vue-query';
+export type RequestLibrary = 'request' | 'alovajs' | 'vue-query';
 
 /** 交互式询问结果 */
 export interface PromptResult {
   projectName: string;
-  platforms: Platform[];
+  platforms: string[];
   uiLibrary: UILibrary;
   requestLibrary: RequestLibrary;
   i18n: boolean;
+  loginStrategy: boolean;
 }

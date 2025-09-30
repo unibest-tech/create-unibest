@@ -1,4 +1,6 @@
 import { logger } from './logger';
+import { existsSync } from 'fs';
+import { join } from 'path';
 
 /**
  * 验证项目名称是否符合规范
@@ -15,6 +17,21 @@ export function validateProjectName(name: string): boolean {
     return false;
   }
   return true;
+}
+
+/**
+ * 先检查目录是否已存在，再验证名称格式是否符合规范
+ * @param projectName - 项目名称
+ * @returns 错误信息或undefined
+ */
+export function checkProjectNameExistAndValidate(projectName: string): string {
+  if (existsSync(join(process.cwd(), projectName))) {
+    return '目录已存在，请选择其他名称';
+  }
+  if (!validateProjectName(projectName)) {
+    return '项目名称不符合规范，请使用字母、数字、连字符或下划线';
+  }
+  return '';
 }
 
 /**
