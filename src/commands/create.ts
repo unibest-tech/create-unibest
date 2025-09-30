@@ -5,12 +5,19 @@ import { generateProject } from './generator/index';
 import { validateProjectName } from '../utils/validate'
 import { logger } from '../utils/logger'
 import { promptUser } from '../utils/prompts'
+import { version } from '../../package.json'
+import { intro, outro, group, text, select, cancel, confirm, log } from '@clack/prompts';
+import { bold, green } from 'kolorist';
 
 /**
  * 创建项目命令
  */
 export async function createCommand(args: minimist.ParsedArgs): Promise<void> {
   const projectName = args._[1]
+
+  const versionUnibest = await getUnibestVersionGitee() || '3.18.3'
+
+  intro(bold(green(`create-unibest@v${version} 快速创建 unibest@v${versionUnibest} 项目`)));
 
   // 验证项目名称
   if (projectName && !validateProjectName(projectName)) {
