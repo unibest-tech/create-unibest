@@ -25,7 +25,6 @@ export class TemplateHandler {
   public getBaseTemplatePath(): string {
     return path.join(this.templateRoot, 'base')
   }
-
   /**
    * 获取UI库模板路径
    */

@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable style/brace-style */
 import process from 'node:process'
 import minimist from 'minimist'
 import { createCommand } from './commands/create'
