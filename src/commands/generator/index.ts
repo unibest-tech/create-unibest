@@ -1,11 +1,17 @@
-import { join, resolve } from 'path';
+// 在文件顶部添加这些导入
+import { fileURLToPath } from 'node:url';
+import { dirname, join, resolve } from 'path';
 import fsExtra from 'fs-extra';
 import ejs from 'ejs';
 import { logger } from '../../utils/logger';
 import { renderTemplate } from '../../utils/ejs';
 import type { ProjectOptions } from '../../types';
 
+// 添加这段代码来获取当前文件的目录路径，替代__dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const { copy, ensureDir, readdir, stat, writeFile } = fsExtra;
+
 /**
  * 生成项目主函数
  * @param options - 项目配置选项
