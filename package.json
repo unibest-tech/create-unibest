@@ -13,7 +13,8 @@
   "scripts": {
     "dev": "NODE_ENV=development tsup --watch",
     "build": "NODE_ENV=production tsup",
-    "prepare": "NODE_ENV=production npm run build"
+    "prepare": "NODE_ENV=production npm run build",
+    "start": "NODE_ENV=development node bin/index.js"
   },
   "dependencies": {
     "ejs": "^3.1.10",

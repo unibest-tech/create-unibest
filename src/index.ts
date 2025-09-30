@@ -4,7 +4,8 @@ import process from 'node:process'
 import minimist from 'minimist'
 import { createCommand } from './commands/create'
 import { printHelp } from './utils/help'
-const IS_DEV = process.env.NODE_ENV === 'development'
+import { color } from './utils/color'
+import { debug } from './utils/debug' // 导入我们的debug工具函数
 
 /**
  * unibest-cli 主入口函数
@@ -12,8 +13,8 @@ const IS_DEV = process.env.NODE_ENV === 'development'
 function main() {
   const args = minimist(process.argv.slice(2))
   const command = args._[0]
-  IS_DEV && console.log('command:', command)
-  IS_DEV && console.log('args:', args)
+  debug('command:', command)
+  debug('args:', args)
 
   // 首先检查版本相关的选项
   if (args.v || args.version) {
@@ -49,9 +50,9 @@ function main() {
 async function printVersion() {
   try {
     const pkg = await import('../package.json')
-    console.log(pkg.default.version)
+    console.log(color.green(pkg.default.version))
   } catch (error) {
-    console.log('1.0.0')
+    console.log(color.red('1.0.0'))
   }
 }
 

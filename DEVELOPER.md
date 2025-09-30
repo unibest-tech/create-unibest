@@ -4,5 +4,5 @@
 
 - `npm run dev`
 <!-- 后面随意写 -->
-- `node dist/index.js -v`
-- `node dist/index.js create -n my-project`
+- `pnpm start -v`
+- `pnpm start create -n my-project`
