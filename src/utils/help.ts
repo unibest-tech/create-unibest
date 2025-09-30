@@ -4,7 +4,7 @@ import { color } from './color'
  * 打印帮助信息
  */
 export function printHelp(): void {
-  console.log(color.green('unibest - 跨平台开发框架脚手架'))
+  console.log(color.green('\nunibest - 跨平台开发框架脚手架'))
   console.log('')
   console.log(color.blue('用法:'))
   console.log('  unibest <command> [options]')

@@ -37,7 +37,7 @@ function main() {
       break
     default:
       if (command) {
-        console.log(`未知命令: ${command}`)
+        console.log(color.red(`未知命令: ${command}`))
       }
       printHelp()
       break
