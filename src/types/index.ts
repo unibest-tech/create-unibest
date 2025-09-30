@@ -4,8 +4,6 @@
 export interface ProjectOptions {
   /** 项目名称 */
   projectName: string;
-  /** 项目根目录 */
-  root: string;
   /** 选择的平台 */
   platforms: Platform[];
   /** 选择的UI库 */
@@ -27,8 +25,6 @@ export type RequestLibrary = 'useRequest' | 'alovajs' | 'vue-query';
 
 /** 交互式询问结果 */
 export interface PromptResult {
-  /** 项目根目录 */
-  root: string;
   projectName: string;
   platforms: Platform[];
   uiLibrary: UILibrary;

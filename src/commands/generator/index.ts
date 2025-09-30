@@ -12,18 +12,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const { copy, ensureDir, readdir, stat, writeFile } = fsExtra;
 
+const root = process.cwd();
 /**
  * 生成项目主函数
  * @param options - 项目配置选项
  */
 export async function generateProject(options: ProjectOptions) {
-  const { projectName, root, platforms, uiLibrary, requestLibrary, i18n, } = options;
+  const { projectName, platforms, uiLibrary, requestLibrary, i18n, } = options;
 
   try {
-    // 1. 创建项目根目录
-    await ensureDir(root);
-    logger.info(`创建项目目录: ${root}`);
-
     // 2. 复制基础模板
     const baseTemplatePath = resolve(__dirname, '../../templates/base');
     await copyTemplate(baseTemplatePath, root, options);
