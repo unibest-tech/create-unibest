@@ -1,6 +1,6 @@
-import { readFile } from 'fs/promises';
-import ejs from 'ejs';
-import { logger } from './logger';
+import { readFile } from 'fs/promises'
+import ejs from 'ejs'
+import { logger } from './logger'
 
 /**
  * 渲染EJS模板文件
@@ -10,13 +10,13 @@ import { logger } from './logger';
  */
 export async function renderTemplate(filePath: string, data: Record<string, any>): Promise<string> {
   try {
-    const templateContent = await readFile(filePath, 'utf8');
+    const templateContent = await readFile(filePath, 'utf8')
     return ejs.render(templateContent, data, {
       filename: filePath,
-      async: true
-    });
+      async: true,
+    })
   } catch (error) {
-    logger.error(`渲染模板失败: ${filePath}`);
-    throw error;
+    logger.error(`渲染模板失败: ${filePath}`)
+    throw error
   }
 }

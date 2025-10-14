@@ -1,5 +1,5 @@
-import { existsSync, readdirSync, rmdirSync, unlinkSync } from 'fs';
-import { join } from 'path';
+import { existsSync, readdirSync, rmdirSync, unlinkSync } from 'fs'
+import { join } from 'path'
 
 /**
  * 清空目录（保留目录本身）
@@ -7,19 +7,19 @@ import { join } from 'path';
  */
 export function emptyDir(dir: string): void {
   if (!existsSync(dir)) {
-    return;
+    return
   }
 
   for (const file of readdirSync(dir)) {
-    const abs = join(dir, file);
+    const abs = join(dir, file)
     // 注意: 这里使用同步方法以确保操作顺序
     if (existsSync(abs) && existsSync(abs)) {
-      const isDir = existsSync(abs) && existsSync(abs);
+      const isDir = existsSync(abs) && existsSync(abs)
       if (isDir) {
-        emptyDir(abs);
-        rmdirSync(abs);
+        emptyDir(abs)
+        rmdirSync(abs)
       } else {
-        unlinkSync(abs);
+        unlinkSync(abs)
       }
     }
   }
@@ -32,11 +32,11 @@ export function emptyDir(dir: string): void {
  */
 export function isEmptyDir(path: string): boolean {
   if (!existsSync(path)) {
-    return true;
+    return true
   }
 
-  const files = readdirSync(path);
-  return files.length === 0 || (files.length === 1 && files[0] === '.git');
+  const files = readdirSync(path)
+  return files.length === 0 || (files.length === 1 && files[0] === '.git')
 }
 
 /**
@@ -44,5 +44,5 @@ export function isEmptyDir(path: string): boolean {
  * @returns 根目录路径
  */
 export function getRootDir(): string {
-  return process.cwd();
+  return process.cwd()
 }

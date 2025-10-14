@@ -1,7 +1,7 @@
-import { logger } from './logger';
-import { existsSync } from 'fs';
-import { yellow } from 'kolorist';
-import { join } from 'path';
+import { logger } from './logger'
+import { existsSync } from 'fs'
+import { yellow } from 'kolorist'
+import { join } from 'path'
 
 /**
  * 验证项目名称是否符合规范
@@ -10,14 +10,14 @@ import { join } from 'path';
  * @returns 是否有效
  */
 export function validateProjectName(name: string): boolean {
-  const reg = /^[a-z0-9_-]+$/;
+  const reg = /^[a-z0-9_-]+$/
   if (!reg.test(name)) {
-    return false;
+    return false
   }
   if (name.startsWith('-') || name.endsWith('-')) {
-    return false;
+    return false
   }
-  return true;
+  return true
 }
 
 /**
@@ -26,14 +26,14 @@ export function validateProjectName(name: string): boolean {
  * @returns 错误信息或undefined
  */
 export function checkProjectNameExistAndValidate(_projectName: string): string {
-  const projectName = _projectName.trim();
+  const projectName = _projectName.trim()
   if (existsSync(join(process.cwd(), projectName))) {
-    return `目录 ${yellow(projectName)} 已存在，请选择其他名称`;
+    return `目录 ${yellow(projectName)} 已存在，请选择其他名称`
   }
   if (!validateProjectName(projectName)) {
-    return `项目名称 ${yellow(projectName)} 不符合规范，请使用字母、数字、连字符或下划线`;
+    return `项目名称 ${yellow(projectName)} 不符合规范，请使用字母、数字、连字符或下划线`
   }
-  return '';
+  return ''
 }
 
 /**
@@ -42,18 +42,18 @@ export function checkProjectNameExistAndValidate(_projectName: string): string {
  * @returns 是否有效
  */
 export function validateProjectOptions(options: Record<string, any>): boolean {
-  const requiredFields = ['projectName', 'platforms', 'uiLibrary', 'requestLibrary'];
-  const missingFields = requiredFields.filter(field => !options[field]);
+  const requiredFields = ['projectName', 'platforms', 'uiLibrary', 'requestLibrary']
+  const missingFields = requiredFields.filter(field => !options[field])
 
   if (missingFields.length > 0) {
-    logger.error(`项目配置不完整，缺少以下字段: ${missingFields.join(', ')}`);
-    return false;
+    logger.error(`项目配置不完整，缺少以下字段: ${missingFields.join(', ')}`)
+    return false
   }
 
   if (!Array.isArray(options.platforms) || options.platforms.length === 0) {
-    logger.error('至少需要选择一个平台');
-    return false;
+    logger.error('至少需要选择一个平台')
+    return false
   }
 
-  return true;
+  return true
 }
