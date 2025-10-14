@@ -5,7 +5,7 @@
 - `npm run dev`
 <!-- 后面随意写 -->
 - `pnpm start -v`
-- `pnpm start new -n my-project`
+- `pnpm start new my-project`
 
 ## 设计
 

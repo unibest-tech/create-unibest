@@ -1,7 +1,8 @@
-import { text, multiselect, select, confirm, cancel, isCancel } from '@clack/prompts';
-import { logger } from '../../utils/logger';
-import type { PromptResult, Platform, UILibrary, RequestLibrary, FormatPlugin } from '../../types';
-import { checkProjectNameExistAndValidate } from '../../utils/validate';
+import { text, multiselect, select, confirm, cancel, isCancel } from '@clack/prompts'
+import { logger } from '../../utils/logger'
+import type { PromptResult, Platform, UILibrary, RequestLibrary, FormatPlugin, TokenStrategy } from '../../types'
+import { checkProjectNameExistAndValidate } from '../../utils/validate'
+import { green } from 'kolorist'
 
 /**
  * 交互式询问用户项目配置
@@ -9,31 +10,28 @@ import { checkProjectNameExistAndValidate } from '../../utils/validate';
  * @param argv - 命令行参数
  * @returns 用户选择的项目配置
  */
-export async function promptUser(
-  projectName?: string,
-  argv: Record<string, any> = {}
-): Promise<PromptResult> {
+export async function promptUser(projectName?: string, argv: Record<string, any> = {}): Promise<PromptResult> {
   try {
     // 1. 项目名称（如果未通过命令行提供）
     if (!projectName) {
       const inputProjectName = await text({
         message: '请输入项目名称',
         initialValue: '',
-        validate: (value) => {
-          if (!value.trim()) return '项目名称不能为空';
-          const errorMessage = checkProjectNameExistAndValidate(value);
-          if (errorMessage) return errorMessage;
-          return;
-        }
-      });
+        validate: value => {
+          if (!value.trim()) return '项目名称不能为空'
+          const errorMessage = checkProjectNameExistAndValidate(value)
+          if (errorMessage) return errorMessage
+          return
+        },
+      })
 
       // 处理用户取消操作
       if (isCancel(inputProjectName)) {
-        cancel('操作已取消');
-        process.exit(0);
+        cancel('操作已取消')
+        process.exit(0)
       }
 
-      projectName = inputProjectName;
+      projectName = inputProjectName
     }
 
     // 2. 选择UI库（单选）
@@ -42,48 +40,50 @@ export async function promptUser(
       options: [
         { value: 'wot-ui', label: 'wot-ui' },
         { value: 'sard-uniapp', label: 'sard-uniapp' },
+        { value: 'uview-pro', label: 'uview-pro' },
         { value: 'uv-ui', label: 'uv-ui' },
-        { value: 'uview-plus', label: 'uview-plus' }
+        { value: 'uview-plus', label: 'uview-plus' },
+        { value: 'skiyee-ui', label: 'skiyee-ui' },
       ],
-      initialValue: 'wot-ui'
-    });
+      initialValue: 'wot-ui',
+    })
 
     // 处理用户取消操作
     if (isCancel(uiLibrary)) {
-      cancel('操作已取消');
-      process.exit(0);
+      cancel('操作已取消')
+      process.exit(0)
     }
 
     // 3. 选择平台（多选）
     const platforms = await multiselect({
-      message: '请选择需要支持的平台（多选）',
+      message: `请选择需要支持的平台（多选）${green('[脚手架将根据所选平台生成对应的平台代码，请根据实际情况选择]')}`,
       options: [
         { value: 'h5', label: 'H5' },
         { value: 'mp-weixin', label: '微信小程序' },
         { value: 'app', label: 'APP' },
-        { value: 'mp-alipay', label: '支付宝小程序' },
-        { value: 'mp-toutiao', label: '抖音小程序' }
+        { value: 'mp-alipay', label: '支付宝小程序（包含钉钉）' },
+        { value: 'mp-toutiao', label: '抖音小程序' },
       ],
       initialValues: ['h5'], // 默认选择 H5
       required: true,
-    });
+    })
 
     // 处理用户取消操作
     if (isCancel(platforms)) {
-      cancel('操作已取消');
-      process.exit(0);
+      cancel('操作已取消')
+      process.exit(0)
     }
 
     // 4. 是否启用多语言（确认）
     const i18n = await confirm({
       message: '是否需要多语言i18n？',
-      initialValue: false
-    });
+      initialValue: false,
+    })
 
     // 处理用户取消操作
     if (isCancel(i18n)) {
-      cancel('操作已取消');
-      process.exit(0);
+      cancel('操作已取消')
+      process.exit(0)
     }
 
     // 5. 选择请求库（单选）
@@ -92,44 +92,59 @@ export async function promptUser(
       options: [
         { value: 'request', label: '菲鸽封装' },
         { value: 'alovajs', label: 'alovajs' },
-        { value: 'vue-query', label: 'vue-query' }
+        // { value: 'vue-query', label: 'vue-query' },
       ],
-      initialValue: 'request'
-    });
+      initialValue: 'request',
+    })
 
     // 处理用户取消操作
     if (isCancel(requestLibrary)) {
-      cancel('操作已取消');
-      process.exit(0);
+      cancel('操作已取消')
+      process.exit(0)
     }
 
     // 6. 是否需要”登录策略“
     const loginStrategy = await confirm({
-      message: '是否需要登录策略？',
-      initialValue: false
-    });
+      message: '是否需要登录策略（黑白名单、登录拦截等）？',
+      initialValue: false,
+    })
 
     // 处理用户取消操作
     if (isCancel(loginStrategy)) {
-      cancel('操作已取消');
-      process.exit(0);
+      cancel('操作已取消')
+      process.exit(0)
     }
 
-    // 7. 格式化插件选择
-    const formatPlugin = await select({
-      message: '格式化插件选择',
+    // 7. 请选择”token策略“
+    const tokenStrategy = await select({
+      message: '请选择token策略（无论选择哪种，都需要后端配合使用）',
       options: [
-        { value: 'oxclint', label: 'Oxclint + Prettier + Stylelint' },
-        { value: 'eslint', label: 'ESLint' },
+        { value: 'double-token', label: '双token策略（推荐）' },
+        { value: 'single-token', label: '单token策略' },
       ],
-      initialValue: 'oxclint'
-    });
-
+      initialValue: 'double-token',
+    })
     // 处理用户取消操作
-    if (isCancel(formatPlugin)) {
-      cancel('操作已取消');
-      process.exit(0);
+    if (isCancel(tokenStrategy)) {
+      cancel('操作已取消')
+      process.exit(0)
     }
+
+    // // 8. 格式化插件选择
+    // const formatPlugin = await select({
+    //   message: '格式化插件选择',
+    //   options: [
+    //     { value: 'eslint', label: 'ESLint（antfu+uni-helper配置）' },
+    //     { value: 'oxclint', label: 'Oxclint + Prettier + Stylelint' },
+    //   ],
+    //   initialValue: 'oxclint',
+    // })
+
+    // // 处理用户取消操作
+    // if (isCancel(formatPlugin)) {
+    //   cancel('操作已取消')
+    //   process.exit(0)
+    // }
 
     return {
       projectName,
@@ -138,10 +153,11 @@ export async function promptUser(
       i18n,
       requestLibrary: requestLibrary as RequestLibrary,
       loginStrategy,
-      formatPlugin: formatPlugin as FormatPlugin,
-    };
+      tokenStrategy: tokenStrategy as TokenStrategy,
+      // formatPlugin: formatPlugin as FormatPlugin,
+    }
   } catch (error) {
-    logger.error(`询问过程出错: ${(error as Error).message}`);
-    process.exit(1);
+    logger.error(`询问过程出错: ${(error as Error).message}`)
+    process.exit(1)
   }
 }
