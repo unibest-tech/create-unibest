@@ -27,14 +27,15 @@ function main() {
   // 根据命令执行不同的功能
   switch (command) {
     case 'create':
+    case 'new':
       createCommand(args)
       break
-    case 'help':
     case '-h':
     case '--help':
       printHelp()
       break
-    case 'version':
+    case '-v':
+    case '--version':
       printVersion()
       break
     default:
