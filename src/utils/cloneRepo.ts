@@ -12,10 +12,10 @@ async function removeGitFolder(localPath: string): Promise<void> {
 
 const REPO_URL = 'https://gitee.com/feige996/unibest.git'
 
-async function cloneRepo(branch: string, localPath: string): Promise<void> {
+async function cloneRepo(root: string, branch: string): Promise<void> {
   try {
     await new Promise<void>((resolve, reject) => {
-      const execStr = `git clone --depth=1 -b ${branch} ${REPO_URL} "${localPath}"`
+      const execStr = `git clone --depth=1 -b ${branch} ${REPO_URL} "${root}"`
 
       exec(execStr, async error => {
         if (error) {
@@ -25,7 +25,7 @@ async function cloneRepo(branch: string, localPath: string): Promise<void> {
         }
 
         try {
-          await removeGitFolder(localPath)
+          await removeGitFolder(root)
           resolve()
         } catch (error) {
           reject(error)
@@ -39,10 +39,9 @@ async function cloneRepo(branch: string, localPath: string): Promise<void> {
   }
 }
 
-export async function cloneRepoByBranch(branch: string, name: string, root: string) {
+export async function cloneRepoByBranch(root: string, name: string, branch: string) {
   try {
-    // 如果填了branch则用对应的branch，否则使用 base， base 分支才是开发最需要的
-    await cloneRepo(branch || 'base', root)
+    await cloneRepo(root, branch)
   } catch (error) {
     console.error(`${red(`模板类型${branch}下载失败！`)} ${error}`)
     process.exit(1)

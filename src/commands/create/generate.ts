@@ -7,6 +7,7 @@ import type { PromptResult } from '../../types'
 import { debug } from '../../utils/debug'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { cloneRepoByBranch } from '../../utils/cloneRepo'
 import fs from 'fs-extra'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -23,12 +24,16 @@ export async function generateProject(options: PromptResult) {
 
   if (!loginStrategy && !i18n) {
     debug('拉取 base 分支')
+    await cloneRepoByBranch(root, projectName, 'base')
   } else if (!loginStrategy && i18n) {
     debug('拉取 base-i18n 分支')
+    await cloneRepoByBranch(root, projectName, 'base-i18n')
   } else if (loginStrategy && !i18n) {
     debug('拉取 base-login 分支')
+    await cloneRepoByBranch(root, projectName, 'base-login')
   } else if (loginStrategy && i18n) {
     debug('拉取 base-login-i18n 分支')
+    await cloneRepoByBranch(root, projectName, 'base-login-i18n')
   }
   // 平台相关代码的处理（暂不处理）
 
