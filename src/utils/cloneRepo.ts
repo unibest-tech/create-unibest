@@ -13,7 +13,6 @@ async function removeGitFolder(localPath: string): Promise<void> {
 const REPO_URL = 'https://gitee.com/feige996/unibest.git'
 
 async function cloneRepo(projectName: string, branch: string): Promise<void> {
-  console.log(`cloneRepo projectName: ${projectName}, branch: ${branch}`)
   try {
     await new Promise<void>((resolve, reject) => {
       const execStr = `git clone --depth=1 -b ${branch} ${REPO_URL} "${projectName}"`
