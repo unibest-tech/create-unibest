@@ -51,7 +51,7 @@ export async function generateProject(options: PromptResult) {
     logger.info(`  cd ${projectName}`)
     logger.info('  pnpm install')
     logger.info('  pnpm dev')
-    logger.info('  运行完以上命令后，即可在对应平台上运行项目')
+    logger.info('  运行完以上命令后，再运行其他平台')
     logger.info('  如：pnpm dev:mp, pnpm dev:app 等')
   } catch (error) {
     logger.error(`生成项目失败: ${(error as Error).message}`)
