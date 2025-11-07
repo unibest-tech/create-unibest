@@ -25,6 +25,9 @@ export function printHelp(): void {
   // console.log('  create-unibest new my-project --ui wot-ui --js')
   console.log('')
   console.log(color.blue('临时使用:'))
-  console.log(color.green('  pnpm create unibest new my-project'))
+  console.log(color.green('  pnpm create unibest <command> [options]'))
+  console.log(color.green('  pnpm create unibest new my-project         创建新的unibest项目'))
+  console.log(color.green('  pnpm create unibest -v                     查看版本信息'))
+  console.log(color.green('  pnpm create unibest -h                     查看帮助信息'))
   console.log('')
 }
