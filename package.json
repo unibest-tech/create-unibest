@@ -6,10 +6,15 @@
   "author": "",
   "license": "ISC",
   "keywords": [],
-  "main": "index.js",
+  "main": "dist/index.js",
   "bin": {
-    "best": "bin/index.js"
+    "best": "bin/index.js",
+    "create-unibest": "bin/index.js"
   },
+  "files": [
+    "bin",
+    "dist"
+  ],
   "scripts": {
     "dev": "NODE_ENV=development tsup --watch",
     "build": "NODE_ENV=production tsup",
