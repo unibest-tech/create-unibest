@@ -15,15 +15,27 @@
 
 ## 🚤 快速使用
 
-- 全局安装
+### 全局安装
 
 ```shell
-npm i -g create-unibest
-best new my-project
+npm i -g create-unibest      # 全局安装，得到 best 命令
+npm update -g create-unibest # 更新 create-unibest 包
 ```
 
-- 临时使用
+安装后可使用的命令：
 
 ```shell
-pnpm create unibest@latest new my-project
+best <command> [options]        # 基本命令格式
+best new my-project             # 创建新的unibest项目
+best -v                         # 查看版本信息
+best -h                         # 查看帮助信息
+```
+
+### 临时使用
+
+```shell
+pnpm create unibest <command> [options]              # 基本命令格式
+pnpm create unibest new my-project                   # 创建新的unibest项目
+pnpm create unibest -v                               # 查看版本信息
+pnpm create unibest -h                               # 查看帮助信息
 ```
