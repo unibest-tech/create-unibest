@@ -87,21 +87,21 @@ export async function promptUser(projectName?: string, argv: Record<string, any>
     }
 
     // 5. 选择请求库（单选）
-    const requestLibrary = await select({
-      message: `请选择请求库${green('[菲鸽封装的基本就够用了，除非您想用或会用 alovajs]')}`,
-      options: [
-        { value: 'request', label: '菲鸽封装' },
-        { value: 'alovajs', label: 'alovajs' },
-        // { value: 'vue-query', label: 'vue-query' },
-      ],
-      initialValue: 'request',
-    })
+    // const requestLibrary = await select({
+    //   message: `请选择请求库${green('[菲鸽封装的基本就够用了，除非您想用或会用 alovajs]')}`,
+    //   options: [
+    //     { value: 'request', label: '菲鸽封装' },
+    //     { value: 'alovajs', label: 'alovajs' },
+    //     // { value: 'vue-query', label: 'vue-query' },
+    //   ],
+    //   initialValue: 'request',
+    // })
 
-    // 处理用户取消操作
-    if (isCancel(requestLibrary)) {
-      cancel('操作已取消')
-      process.exit(0)
-    }
+    // // 处理用户取消操作
+    // if (isCancel(requestLibrary)) {
+    //   cancel('操作已取消')
+    //   process.exit(0)
+    // }
 
     // 6. 是否需要”登录策略“
     const loginStrategy = await confirm({
@@ -151,7 +151,7 @@ export async function promptUser(projectName?: string, argv: Record<string, any>
       uiLibrary: uiLibrary as UILibrary,
       platforms: platforms as Platform[],
       i18n,
-      requestLibrary: requestLibrary as RequestLibrary,
+      // requestLibrary: requestLibrary as RequestLibrary,
       loginStrategy,
       // tokenStrategy: tokenStrategy as TokenStrategy,
       // formatPlugin: formatPlugin as FormatPlugin,

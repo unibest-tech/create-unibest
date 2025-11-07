@@ -18,7 +18,7 @@ export interface PromptResult {
   projectName: string
   platforms: Platform[]
   uiLibrary: UILibrary
-  requestLibrary: RequestLibrary
+  requestLibrary?: RequestLibrary
   i18n: boolean
   loginStrategy: boolean
   tokenStrategy?: TokenStrategy

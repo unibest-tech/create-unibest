@@ -20,7 +20,7 @@ const root = process.cwd()
  */
 export async function generateProject(options: PromptResult) {
   debug('generateProject options', options)
-  const { projectName, platforms, uiLibrary, requestLibrary, i18n, loginStrategy, formatPlugin } = options
+  const { projectName, platforms, uiLibrary, requestLibrary, i18n } = options
 
   try {
     // 2. 复制基础模板
