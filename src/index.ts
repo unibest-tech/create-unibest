@@ -32,7 +32,7 @@ function main() {
       break
     case '-h':
     case '--help':
-      // printHelp()
+      printHelp()
       break
     case '-v':
     case '--version':
@@ -42,7 +42,7 @@ function main() {
       if (command) {
         console.log(color.red(`未知命令: ${command}`))
       }
-      // printHelp()
+      printHelp()
       break
   }
 }

@@ -7,7 +7,7 @@ export function printHelp(): void {
   console.log(color.green('\ncreate-unibest - 跨平台开发框架脚手架'))
   console.log('')
   console.log(color.blue('全局安装:'))
-  console.log('  pnpm install -g create-unibest')
+  console.log('  npm install -g create-unibest')
   console.log('  best new my-project')
   console.log('  best create my-project (new 同 create)')
   console.log('')
