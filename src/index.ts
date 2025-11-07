@@ -55,9 +55,8 @@ async function printVersion() {
     const unibestVersion = await getUnibestVersion()
     console.log(green(`create-unibest: `) + yellow(version))
     console.log(green(`unibest: `) + yellow(unibestVersion || '1.0.0'))
-    console.log('')
   } catch (error) {
-    console.log(red('1.0.0'))
+    console.log(green(`create-unibest: `) + yellow(version))
   }
 }
 
