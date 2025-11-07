@@ -57,7 +57,7 @@ export const UI_LIBRARY_CONFIGS: Record<UILibrary, UILibraryConfig | null> = {
       path: 'uview-pro/components/u-$1/u-$1.vue',
     },
     needMainImport: true,
-    mainImport: "import uViewPro from 'uview-pro'",
+    mainImport: "import uViewPro from 'uview-pro';",
     needUniScss: true,
     uniScssImport: "@import 'uview-pro/theme.scss';",
     needAppVue: true,
@@ -177,69 +177,30 @@ async function updatePagesConfig(projectPath: string, easycom: { pattern: string
     return
   }
 
-  let content = readFileSync(pagesConfigPath, 'utf8')
+  const originalContent = readFileSync(pagesConfigPath, 'utf8')
+  let content = originalContent
 
-  // 检查是否已存在该配置（通过 pattern 检查）
-  const patternRegex = new RegExp(`['"]${easycom.pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}['"]`)
-  if (patternRegex.test(content)) {
+  const patternLiteral = escapeSingleQuotes(easycom.pattern)
+  const pathLiteral = escapeSingleQuotes(easycom.path)
+  const existingEntryRegex = new RegExp(
+    `["']${escapeForRegExp(patternLiteral)}["']\\s*:\\s*["']${escapeForRegExp(pathLiteral)}["']`,
+  )
+
+  if (existingEntryRegex.test(content)) {
     return
   }
 
-  // 查找 easycom.custom 配置位置
-  // 匹配 easycom: { ... custom: { ... } ... }
-  const easycomRegex = /easycom:\s*\{([^}]*custom:\s*\{)([^}]*)(\}[^}]*)\}/s
-  const match = content.match(easycomRegex)
+  const entry = { pattern: patternLiteral, path: pathLiteral }
 
-  if (match) {
-    const [, beforeCustom, customContent, afterCustom] = match
-    const newConfig = `    '${easycom.pattern}': '${easycom.path}',`
+  content =
+    addToExistingCustomBlock(content, entry) ??
+    addCustomBlock(content, entry) ??
+    addEasycomBlock(content, entry) ??
+    appendEasycomBlock(content, entry)
 
-    // 在 custom 对象中添加新配置
-    let updatedCustom = customContent.trim()
-    if (updatedCustom) {
-      // 如果已有内容，确保格式正确
-      updatedCustom = updatedCustom.endsWith(',') ? `${updatedCustom}\n${newConfig}` : `${updatedCustom},\n${newConfig}`
-    } else {
-      updatedCustom = newConfig
-    }
-
-    content = content.replace(easycomRegex, `easycom: {${beforeCustom}${updatedCustom}${afterCustom}}`)
-  } else {
-    // 如果不存在 easycom 配置，尝试在 export default 中添加
-    const exportDefaultRegex = /export default\s*\{/
-    if (exportDefaultRegex.test(content)) {
-      // 查找第一个属性，在它之前插入 easycom
-      const firstPropertyMatch = content.match(/export default\s*\{\s*(\w+)/)
-      if (firstPropertyMatch) {
-        const firstProperty = firstPropertyMatch[1]
-        content = content.replace(
-          new RegExp(`(export default\\s*\\{\\s*)(${firstProperty})`),
-          `$1easycom: {
-    autoscan: true,
-    custom: {
-      '${easycom.pattern}': '${easycom.path}',
-    },
-  },
-  $2`,
-        )
-      } else {
-        // 如果找不到属性，直接添加
-        content = content.replace(
-          exportDefaultRegex,
-          `export default {
-  easycom: {
-    autoscan: true,
-    custom: {
-      '${easycom.pattern}': '${easycom.path}',
-    },
-  },
-  `,
-        )
-      }
-    }
+  if (content !== originalContent) {
+    writeFileSync(pagesConfigPath, ensureTrailingNewline(content))
   }
-
-  writeFileSync(pagesConfigPath, content)
 }
 
 /**
@@ -376,4 +337,157 @@ async function updateAppVue(projectPath: string, importCode: string): Promise<vo
   }
 
   writeFileSync(appVuePath, content)
+}
+
+interface EasycomEntry {
+  pattern: string
+  path: string
+}
+
+function addToExistingCustomBlock(content: string, entry: EasycomEntry): string | null {
+  const customIndex = content.indexOf('custom:')
+  if (customIndex === -1) {
+    return null
+  }
+
+  const braceIndex = content.indexOf('{', customIndex)
+  if (braceIndex === -1) {
+    return null
+  }
+
+  const closingIndex = findMatchingBrace(content, braceIndex)
+  if (closingIndex === -1) {
+    return null
+  }
+
+  const inside = content.slice(braceIndex + 1, closingIndex)
+  const hasEntries = inside.trim().length > 0
+  const entryIndent = getLineIndent(content, braceIndex) + '  '
+  const entryLine = `${entryIndent}'${entry.pattern}': '${entry.path}',`
+
+  if (!hasEntries) {
+    const closingIndent = getLineIndent(content, closingIndex)
+    return (
+      content.slice(0, braceIndex + 1) +
+      `
+${entryLine}
+${closingIndent}` +
+      content.slice(closingIndex)
+    )
+  }
+
+  const beforeRaw = content.slice(0, closingIndex).replace(/\s*$/, '')
+  const separator = beforeRaw.endsWith('\n') ? '' : '\n'
+  const after = content.slice(closingIndex)
+  return `${beforeRaw}${separator}${entryLine}
+${after}`
+}
+
+function addCustomBlock(content: string, entry: EasycomEntry): string | null {
+  const easycomIndex = content.indexOf('easycom:')
+  if (easycomIndex === -1) {
+    return null
+  }
+
+  const braceIndex = content.indexOf('{', easycomIndex)
+  if (braceIndex === -1) {
+    return null
+  }
+
+  const closingIndex = findMatchingBrace(content, braceIndex)
+  if (closingIndex === -1) {
+    return null
+  }
+
+  const easycomIndent = getLineIndent(content, braceIndex)
+  const customIndent = easycomIndent + '  '
+  const entryIndent = customIndent + '  '
+  const customBlock = `${customIndent}custom: {
+${entryIndent}'${entry.pattern}': '${entry.path}',
+${customIndent}},`
+
+  const beforeRaw = content.slice(0, closingIndex).replace(/\s*$/, '')
+  const separator = beforeRaw.endsWith('\n') ? '' : '\n'
+  const after = content.slice(closingIndex)
+  return `${beforeRaw}${separator}${customBlock}
+${after}`
+}
+
+function addEasycomBlock(content: string, entry: EasycomEntry): string | null {
+  const exportIndex = content.indexOf('export default')
+  if (exportIndex === -1) {
+    return null
+  }
+
+  const braceIndex = content.indexOf('{', exportIndex)
+  if (braceIndex === -1) {
+    return null
+  }
+
+  const closingIndex = findMatchingBrace(content, braceIndex)
+  if (closingIndex === -1) {
+    return null
+  }
+
+  const blockIndent = getLineIndent(content, braceIndex) + '  '
+  const entryIndent = blockIndent + '  '
+  const block = `${blockIndent}easycom: {
+${blockIndent}  autoscan: true,
+${blockIndent}  custom: {
+${entryIndent}'${entry.pattern}': '${entry.path}',
+${blockIndent}  },
+${blockIndent}},`
+
+  const before = content.slice(0, braceIndex + 1)
+  const after = content.slice(braceIndex + 1)
+  const prefix = before.endsWith('\n') ? before : `${before}\n`
+  return `${prefix}${block}
+${after}`
+}
+
+function appendEasycomBlock(content: string, entry: EasycomEntry): string {
+  const block = `
+export const easycom = {
+  autoscan: true,
+  custom: {
+    '${entry.pattern}': '${entry.path}',
+  },
+}
+`
+  return `${content}${block}`
+}
+
+function findMatchingBrace(content: string, startIndex: number): number {
+  let depth = 0
+  for (let i = startIndex; i < content.length; i += 1) {
+    const char = content[i]
+    if (char === '{') {
+      depth += 1
+    } else if (char === '}') {
+      depth -= 1
+      if (depth === 0) {
+        return i
+      }
+    }
+  }
+  return -1
+}
+
+function getLineIndent(content: string, index: number): string {
+  const lineStart = content.lastIndexOf('\n', index) + 1
+  const line = content.slice(lineStart, index)
+  const match = line.match(/^\s*/)
+  return match ? match[0] : ''
+}
+
+function escapeSingleQuotes(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+}
+
+function escapeForRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function ensureTrailingNewline(value: string): string {
+  return value.endsWith('\n') ? value : `${value}\n`
 }
