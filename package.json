@@ -1,7 +1,7 @@
 {
   "name": "create-unibest",
   "type": "module",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "packageManager": "pnpm@9.0.0",
   "description": "快速创建unibest项目的脚手架工具",
   "author": "",
