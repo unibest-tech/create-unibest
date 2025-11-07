@@ -64,9 +64,8 @@ export async function promptUser(projectName?: string, argv: Record<string, any>
         { value: 'sard-uniapp', label: 'sard-uniapp' },
         { value: 'uv-ui', label: 'uv-ui' },
         { value: 'uview-plus', label: 'uview-plus' },
-        { value: 'skiyee-ui', label: 'skiyee-ui' },
       ],
-      initialValue: 'wot-ui',
+      initialValue: 'none',
     })
 
     // 处理用户取消操作
