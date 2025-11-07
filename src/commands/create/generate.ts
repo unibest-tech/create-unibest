@@ -33,16 +33,20 @@ export async function generateProject(options: PromptResult) {
   // 平台相关代码的处理（暂不处理）
 
   // ui库引入
-  if (uiLibrary === 'wot-ui') {
+  if (uiLibrary === 'none') {
+    debug('不引入任何UI库')
+  } else if (uiLibrary === 'wot-ui') {
     debug('引入 wot-ui 库')
   } else if (uiLibrary === 'sard-ui') {
     debug('引入 sard-ui 库')
+  } else if (uiLibrary === 'uview-pro') {
+    debug('引入 uview-pro 库')
   } else if (uiLibrary === 'uv-ui') {
     debug('引入 uv-ui 库')
   } else if (uiLibrary === 'uview-plus') {
     debug('引入 uview-plus 库')
-  } else if (uiLibrary === 'uview-pro') {
-    debug('引入 uview-pro 库')
+  } else if (uiLibrary === 'skyiee-ui') {
+    debug('引入 skyiee-ui 库')
   }
 
   try {
