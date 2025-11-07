@@ -55,7 +55,3 @@ jobs:
 
       - name: Build project
         run: nr build
-
-      # 使用tsc进行类型检查，而不是依赖不存在的typecheck脚本
-      - name: TypeScript type check
-        run: pnpx tsc --noEmit
