@@ -34,27 +34,7 @@ export async function promptUser(projectName?: string, argv: Record<string, any>
       projectName = inputProjectName
     }
 
-    // 2. 选择UI库（单选）
-    const uiLibrary = await select({
-      message: '请选择UI库',
-      options: [
-        { value: 'wot-ui', label: 'wot-ui' },
-        { value: 'sard-uniapp', label: 'sard-uniapp' },
-        { value: 'uview-pro', label: 'uview-pro' },
-        { value: 'uv-ui', label: 'uv-ui' },
-        { value: 'uview-plus', label: 'uview-plus' },
-        { value: 'skiyee-ui', label: 'skiyee-ui' },
-      ],
-      initialValue: 'wot-ui',
-    })
-
-    // 处理用户取消操作
-    if (isCancel(uiLibrary)) {
-      cancel('操作已取消')
-      process.exit(0)
-    }
-
-    // 3. 选择平台（多选）
+    // 2. 选择平台（多选）
     const platforms = await multiselect({
       message: `请选择需要支持的平台（多选）${green('[脚手架将根据所选平台生成对应的平台代码，请根据实际情况选择]')}`,
       options: [
@@ -74,7 +54,40 @@ export async function promptUser(projectName?: string, argv: Record<string, any>
       process.exit(0)
     }
 
-    // 4. 是否启用多语言（确认）
+    // 3. 选择UI库（单选）
+    const uiLibrary = await select({
+      message: '请选择UI库',
+      options: [
+        { value: 'none', label: '无UI库' },
+        { value: 'wot-ui', label: 'wot-ui' },
+        { value: 'uview-pro', label: 'uview-pro' },
+        { value: 'sard-ui', label: 'sard-ui' },
+        { value: 'uv-ui', label: 'uv-ui' },
+        { value: 'uview-plus', label: 'uview-plus' },
+        { value: 'skiyee-ui', label: 'skiyee-ui' },
+      ],
+      initialValue: 'wot-ui',
+    })
+
+    // 处理用户取消操作
+    if (isCancel(uiLibrary)) {
+      cancel('操作已取消')
+      process.exit(0)
+    }
+
+    // 4. 是否需要”登录策略“
+    const loginStrategy = await confirm({
+      message: `是否需要登录策略（黑白名单、登录拦截等）？${green('[暂不知道的，选No即可，项目生成后也可以加该策略]')}`,
+      initialValue: false,
+    })
+
+    // 处理用户取消操作
+    if (isCancel(loginStrategy)) {
+      cancel('操作已取消')
+      process.exit(0)
+    }
+
+    // 5. 是否启用多语言（确认）
     const i18n = await confirm({
       message: '是否需要多语言i18n？',
       initialValue: false,
@@ -86,7 +99,7 @@ export async function promptUser(projectName?: string, argv: Record<string, any>
       process.exit(0)
     }
 
-    // 5. 选择请求库（单选）
+    // 6. 选择请求库（单选）
     // const requestLibrary = await select({
     //   message: `请选择请求库${green('[菲鸽封装的基本就够用了，除非您想用或会用 alovajs]')}`,
     //   options: [
@@ -102,18 +115,6 @@ export async function promptUser(projectName?: string, argv: Record<string, any>
     //   cancel('操作已取消')
     //   process.exit(0)
     // }
-
-    // 6. 是否需要”登录策略“
-    const loginStrategy = await confirm({
-      message: `是否需要登录策略（黑白名单、登录拦截等）？${green('[暂不知道的，选No即可，项目生成后也可以加该策略]')}`,
-      initialValue: false,
-    })
-
-    // 处理用户取消操作
-    if (isCancel(loginStrategy)) {
-      cancel('操作已取消')
-      process.exit(0)
-    }
 
     // // 7. 请选择”token策略“
     // const tokenStrategy = await select({
@@ -148,11 +149,11 @@ export async function promptUser(projectName?: string, argv: Record<string, any>
 
     return {
       projectName,
-      uiLibrary: uiLibrary as UILibrary,
       platforms: platforms as Platform[],
+      uiLibrary: uiLibrary as UILibrary,
+      loginStrategy,
       i18n,
       // requestLibrary: requestLibrary as RequestLibrary,
-      loginStrategy,
       // tokenStrategy: tokenStrategy as TokenStrategy,
       // formatPlugin: formatPlugin as FormatPlugin,
     }

@@ -1,7 +1,6 @@
-import { join, resolve } from 'path'
+import { join } from 'path'
 import process from 'node:process'
 import fsExtra from 'fs-extra'
-import ejs from 'ejs'
 import { logger } from '../../utils/logger'
 import { renderTemplate } from '../../utils/ejs'
 import type { PromptResult } from '../../types'
@@ -20,51 +19,40 @@ const root = process.cwd()
  */
 export async function generateProject(options: PromptResult) {
   debug('generateProject options', options)
-  const { projectName, platforms, uiLibrary, requestLibrary, i18n } = options
+  const { projectName, platforms, uiLibrary, loginStrategy, i18n } = options
+
+  if (!loginStrategy && !i18n) {
+    debug('拉取 base 分支')
+  } else if (!loginStrategy && i18n) {
+    debug('拉取 base-i18n 分支')
+  } else if (loginStrategy && !i18n) {
+    debug('拉取 base-login 分支')
+  } else if (loginStrategy && i18n) {
+    debug('拉取 base-login-i18n 分支')
+  }
+  // 平台相关代码的处理（暂不处理）
+
+  // ui库引入
+  if (uiLibrary === 'wot-ui') {
+    debug('引入 wot-ui 库')
+  } else if (uiLibrary === 'sard-ui') {
+    debug('引入 sard-ui 库')
+  } else if (uiLibrary === 'uv-ui') {
+    debug('引入 uv-ui 库')
+  } else if (uiLibrary === 'uview-plus') {
+    debug('引入 uview-plus 库')
+  } else if (uiLibrary === 'uview-pro') {
+    debug('引入 uview-pro 库')
+  }
 
   try {
-    // 2. 复制基础模板
-    const baseTemplatePath = resolve(__dirname, '../../templates/base')
-    await copyTemplate(baseTemplatePath, root, options)
-    logger.info('复制基础模板完成')
-
-    // 3. 复制平台特定模板
-    for (const platform of platforms) {
-      const platformTemplatePath = resolve(__dirname, `../../templates/platforms/${platform}`)
-      if (await exists(platformTemplatePath)) {
-        await copyTemplate(platformTemplatePath, root, options)
-        logger.info(`复制${getPlatformName(platform)}模板完成`)
-      }
-    }
-
-    // 4. 复制UI库特定模板
-    const uiTemplatePath = resolve(__dirname, `../../templates/ui/${uiLibrary}`)
-    if (await exists(uiTemplatePath)) {
-      await copyTemplate(uiTemplatePath, root, options)
-      logger.info(`复制${uiLibrary}模板完成`)
-    }
-
-    // 5. 复制请求库特定模板
-    const requestTemplatePath = resolve(__dirname, `../../templates/request/${requestLibrary}`)
-    if (await exists(requestTemplatePath)) {
-      await copyTemplate(requestTemplatePath, root, options)
-      logger.info(`复制${requestLibrary}模板完成`)
-    }
-
-    // 6. 如果启用多语言，复制多语言模板
-    if (i18n) {
-      const i18nTemplatePath = resolve(__dirname, '../../templates/i18n')
-      if (await exists(i18nTemplatePath)) {
-        await copyTemplate(i18nTemplatePath, root, options)
-        logger.info('复制多语言模板完成')
-      }
-    }
-
     logger.success(`项目${projectName}创建成功！`)
     logger.info('下一步:')
     logger.info(`  cd ${projectName}`)
     logger.info('  pnpm install')
     logger.info('  pnpm dev')
+    logger.info('  运行完以上命令后，即可在对应平台上运行项目')
+    logger.info('  如：pnpm dev:mp, pnpm dev:app 等')
   } catch (error) {
     logger.error(`生成项目失败: ${(error as Error).message}`)
     throw error
