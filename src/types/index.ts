@@ -21,6 +21,6 @@ export interface PromptResult {
   requestLibrary: RequestLibrary
   i18n: boolean
   loginStrategy: boolean
-  tokenStrategy: TokenStrategy
+  tokenStrategy?: TokenStrategy
   formatPlugin?: FormatPlugin
 }

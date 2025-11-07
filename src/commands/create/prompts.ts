@@ -115,20 +115,20 @@ export async function promptUser(projectName?: string, argv: Record<string, any>
       process.exit(0)
     }
 
-    // 7. 请选择”token策略“
-    const tokenStrategy = await select({
-      message: `请选择token策略${green('[无论选择哪种，都需要后端配合使用]')}`,
-      options: [
-        { value: 'double-token', label: '双token策略（推荐）' },
-        { value: 'single-token', label: '单token策略' },
-      ],
-      initialValue: 'double-token',
-    })
-    // 处理用户取消操作
-    if (isCancel(tokenStrategy)) {
-      cancel('操作已取消')
-      process.exit(0)
-    }
+    // // 7. 请选择”token策略“
+    // const tokenStrategy = await select({
+    //   message: `请选择token策略${green('[无论选择哪种，都需要后端配合使用]')}`,
+    //   options: [
+    //     { value: 'double-token', label: '双token策略（推荐）' },
+    //     { value: 'single-token', label: '单token策略' },
+    //   ],
+    //   initialValue: 'double-token',
+    // })
+    // // 处理用户取消操作
+    // if (isCancel(tokenStrategy)) {
+    //   cancel('操作已取消')
+    //   process.exit(0)
+    // }
 
     // // 8. 格式化插件选择
     // const formatPlugin = await select({
@@ -153,7 +153,7 @@ export async function promptUser(projectName?: string, argv: Record<string, any>
       i18n,
       requestLibrary: requestLibrary as RequestLibrary,
       loginStrategy,
-      tokenStrategy: tokenStrategy as TokenStrategy,
+      // tokenStrategy: tokenStrategy as TokenStrategy,
       // formatPlugin: formatPlugin as FormatPlugin,
     }
   } catch (error) {
