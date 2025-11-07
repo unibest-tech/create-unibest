@@ -15,6 +15,15 @@
 
 ## 🚤 快速使用
 
+- 全局安装
+
 ```shell
-pnpm create unibest@latest
+pnpm install -g create-unibest
+best new my-project
+```
+
+- 临时使用
+
+```shell
+pnpm create unibest@latest new my-project
 ```
