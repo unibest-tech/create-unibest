@@ -42,8 +42,8 @@ export async function generateProject(options: PromptResult) {
     debug('不引入任何UI库')
   } else if (uiLibrary === 'wot-ui') {
     debug('引入 wot-ui 库')
-  } else if (uiLibrary === 'sard-ui') {
-    debug('引入 sard-ui 库')
+  } else if (uiLibrary === 'sard-uniapp') {
+    debug('引入 sard-uniapp 库')
   } else if (uiLibrary === 'uview-pro') {
     debug('引入 uview-pro 库')
   } else if (uiLibrary === 'uv-ui') {

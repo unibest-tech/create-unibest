@@ -61,7 +61,7 @@ export async function promptUser(projectName?: string, argv: Record<string, any>
         { value: 'none', label: '无UI库' },
         { value: 'wot-ui', label: 'wot-ui' },
         { value: 'uview-pro', label: 'uview-pro' },
-        { value: 'sard-ui', label: 'sard-ui' },
+        { value: 'sard-uniapp', label: 'sard-uniapp' },
         { value: 'uv-ui', label: 'uv-ui' },
         { value: 'uview-plus', label: 'uview-plus' },
         { value: 'skiyee-ui', label: 'skiyee-ui' },
