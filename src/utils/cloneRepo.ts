@@ -12,10 +12,11 @@ async function removeGitFolder(localPath: string): Promise<void> {
 
 const REPO_URL = 'https://gitee.com/feige996/unibest.git'
 
-async function cloneRepo(root: string, branch: string): Promise<void> {
+async function cloneRepo(projectName: string, branch: string): Promise<void> {
+  console.log(`cloneRepo projectName: ${projectName}, branch: ${branch}`)
   try {
     await new Promise<void>((resolve, reject) => {
-      const execStr = `git clone --depth=1 -b ${branch} ${REPO_URL} "${root}"`
+      const execStr = `git clone --depth=1 -b ${branch} ${REPO_URL} "${projectName}"`
 
       exec(execStr, async error => {
         if (error) {
@@ -25,7 +26,7 @@ async function cloneRepo(root: string, branch: string): Promise<void> {
         }
 
         try {
-          await removeGitFolder(root)
+          await removeGitFolder(projectName)
           resolve()
         } catch (error) {
           reject(error)
@@ -41,12 +42,14 @@ async function cloneRepo(root: string, branch: string): Promise<void> {
 
 export async function cloneRepoByBranch(root: string, name: string, branch: string) {
   try {
-    await cloneRepo(root, branch)
+    await cloneRepo(name, branch)
   } catch (error) {
     console.error(`${red(`模板类型${branch}下载失败！`)} ${error}`)
     process.exit(1)
   }
 
   // 替换package.json中的项目名称和version
-  replacePackageJson(root, name, '1.0.0')
+  // 注意：package.json位于克隆的项目目录中，因此需要拼接正确的路径
+  const projectPath = join(root, name)
+  replacePackageJson(projectPath, name, '1.0.0')
 }
