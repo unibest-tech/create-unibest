@@ -9,33 +9,14 @@ on:
     branches:
       - main
 
+# 可重用的步骤组
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 9.0.0
-
-      - name: Set node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18.x
-          cache: pnpm
-
-      - name: Setup
-        run: npm i -g @antfu/ni
-
-      - name: Install
-        run: pnpm install --no-frozen-lockfile
-
-      - name: Typecheck
-        run: nr typecheck
-
-  test:
+  # 使用单一作业替代分离的typecheck和test作业，因为它们有大量重复步骤
+  build-and-check:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -45,22 +26,36 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.0
+          # 启用核心包管理以确保版本一致性
+          run_install: false
 
-      - name: Set node ${{ matrix.node }}
+      - name: Set up Node.js ${{ matrix.node }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-          cache: pnpm
+          cache: 'pnpm'
+          # 确保使用正确的缓存键
+          cache-dependency-path: 'pnpm-lock.yaml'
 
-      - name: Setup
+      - name: Setup utilities
         run: npm i -g @antfu/ni
 
-      - name: Install
-        run: pnpm install --no-frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        # 使用frozen-lockfile确保依赖版本确定性
 
-      - name: Build
+      - name: Build project
         run: nr build
+
+      # 使用tsc进行类型检查，而不是依赖不存在的typecheck脚本
+      - name: TypeScript type check
+        run: pnpx tsc --noEmit
