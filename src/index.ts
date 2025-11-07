@@ -51,12 +51,12 @@ function main() {
  * 打印版本信息
  */
 async function printVersion() {
+  console.log(green(`create-unibest: `) + yellow(version))
   try {
     const unibestVersion = await getUnibestVersion()
-    console.log(green(`create-unibest: `) + yellow(version))
     console.log(green(`unibest: `) + yellow(unibestVersion || '1.0.0'))
   } catch (error) {
-    console.log(green(`create-unibest: `) + yellow(version))
+    console.log(green(`unibest: 未能获取到版本号`))
   }
 }
 
