@@ -18,7 +18,7 @@
 - 全局安装
 
 ```shell
-npm install -g create-unibest
+npm i -g create-unibest
 best new my-project
 ```
 
