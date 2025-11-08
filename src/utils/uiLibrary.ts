@@ -333,7 +333,7 @@ async function updateAppVue(projectPath: string, importCode: string): Promise<vo
     content = content.replace(styleRegex, `$1\n${importCode}`)
   } else {
     // 如果没有 style 标签，在文件末尾添加
-    content = `${content}\n<style lang="scss">\n${importCode}\n</style>`
+    content = `${content}\n<style lang="scss">\n${importCode}</style>`
   }
 
   writeFileSync(appVuePath, content)
