@@ -1,5 +1,12 @@
 import fetch from 'node-fetch'
 
+// 缓存过期时间（毫秒）- 1小时
+const CACHE_EXPIRY_TIME = 60 * 60 * 1000
+
+// 缓存存储变量
+let cachedVersion: string | null = null
+let lastCacheTime: number = 0
+
 /**
  * Gitee API 返回的文件响应接口
  */
@@ -13,6 +20,12 @@ interface GiteeFileResponse {
  * @returns 版本号字符串或 null（如果获取失败）
  */
 async function getUnibestVersion(): Promise<string | null> {
+  // 检查缓存是否有效
+  const now = Date.now()
+  if (cachedVersion && (now - lastCacheTime) < CACHE_EXPIRY_TIME) {
+    return cachedVersion
+  }
+
   try {
     const apiUrl = `https://gitee.com/api/v5/repos/feige996/unibest/contents/package.json?ref=main`
     const response = await fetch(apiUrl, {
@@ -30,18 +43,21 @@ async function getUnibestVersion(): Promise<string | null> {
         // 使用 Node.js 内置的 Buffer 解码 base64 内容
         const decodedContent = Buffer.from(content, 'base64').toString('utf8')
         const packageJson = JSON.parse(decodedContent)
-        return packageJson.version || null
+      // 更新缓存
+      cachedVersion = packageJson.version || null
+      lastCacheTime = Date.now()
+      return cachedVersion
       } else {
         // console.error(`Unsupported encoding: ${encoding}`);
         return null
       }
     } else {
       // console.error(`Request failed with status: ${response.status}`);
-      return null
+      return cachedVersion || null
     }
   } catch (error) {
     // console.error(`An error occurred: ${error}`);
-    return null
+    return cachedVersion || null
   }
 }
 
