@@ -18,17 +18,17 @@
 ### 全局安装
 
 ```shell
-npm i -g create-unibest      # 全局安装，得到 best 命令
-npm update -g create-unibest # 更新 create-unibest 包
+npm i -g create-unibest           # 全局安装，得到 best 命令
+npm update -g create-unibest      # 更新 create-unibest 包
 ```
 
 安装后可使用的命令：
 
 ```shell
-best <command> [options]        # 基本命令格式
-best new my-project             # 创建新的unibest项目
-best -v                         # 查看版本信息
-best -h                         # 查看帮助信息
+best <command> [options]          # 基本命令格式
+best new my-project               # 创建新的unibest项目
+best -v                           # 查看版本信息
+best -h                           # 查看帮助信息
 ```
 
 ### 临时使用
