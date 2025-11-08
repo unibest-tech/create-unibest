@@ -5,6 +5,7 @@ import crypto from 'crypto'
 import packageJSON from '../../package.json'
 import getUnibestVersion from './unibestVersion'
 import { PromptResult } from '../types'
+import { debug } from './debug'
 
 /**
  * 发送统计数据到服务器
@@ -15,7 +16,7 @@ export async function beacon(options: PromptResult) {
     const unibestVersion = await getUnibestVersion()
     const deviceIdentifier = generateDeviceIdentifier()
 
-    await fetch('https://ukw0y1.laf.run/create-unibest/beacon2', {
+    await fetch('https://ukw0y1.laf.run/create-unibest-v3/beacon', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -34,6 +35,7 @@ export async function beacon(options: PromptResult) {
         uuid: deviceIdentifier, // 添加设备唯一标识符
       }),
     })
+    debug('Beacon sent successfully')
   } catch (error) {
     // 不需要打印
   }
