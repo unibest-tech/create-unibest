@@ -279,7 +279,7 @@ async function updateMainTs(projectPath: string, importCode: string): Promise<vo
  * 更新 uni.scss，添加样式引入
  */
 async function updateUniScss(projectPath: string, importCode: string): Promise<void> {
-  const uniScssPath = join(projectPath, 'src', 'style', 'uni.scss')
+  const uniScssPath = join(projectPath, 'src', 'uni.scss')
   if (!existsSync(uniScssPath)) {
     // 尝试其他可能的位置
     const altPath = join(projectPath, 'uni.scss')
