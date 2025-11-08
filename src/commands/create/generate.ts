@@ -1,6 +1,7 @@
 import process from 'node:process'
 import { logger } from '../../utils/logger'
 import type { PromptResult } from '../../types'
+import { log } from '@clack/prompts'
 import { cloneRepoByBranch } from '../../utils/cloneRepo'
 import { applyUILibraryConfig } from '../../utils/uiLibrary'
 import { debug } from '../../utils/debug'
@@ -46,7 +47,7 @@ export async function generateProject(options: PromptResult) {
   }
 
   try {
-    logger.success(`项目${projectName}创建成功！`)
+    log.success(`项目${projectName}创建成功！`)
     logger.info('下一步:')
     logger.info(`  cd ${projectName}`)
     logger.info('  pnpm install')

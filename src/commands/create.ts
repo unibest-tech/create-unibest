@@ -34,8 +34,6 @@ export async function createCommand(args: minimist.ParsedArgs): Promise<void> {
 
     // 生成项目
     await generateProject(projectOptions)
-
-    log.success('项目创建成功！')
   } catch (error) {
     log.error(`创建项目失败: ${(error as Error).message}`)
     process.exit(1)
