@@ -3,8 +3,8 @@ import { promises as fs } from 'fs'
 import { join } from 'path'
 import os from 'os'
 
-// 缓存过期时间（毫秒）- 1小时
-const CACHE_EXPIRY_TIME = 60 * 60 * 1000
+// 缓存过期时间（毫秒）- 4小时
+const CACHE_EXPIRY_TIME = 4 * 60 * 60 * 1000
 
 /**
  * Gitee API 返回的文件响应接口

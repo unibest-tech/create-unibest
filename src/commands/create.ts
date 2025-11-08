@@ -16,7 +16,7 @@ import { beacon } from '../utils/beacon'
 export async function createCommand(args: minimist.ParsedArgs): Promise<void> {
   const projectName = args._[1]
 
-  const versionUnibest = (await getUnibestVersion()) || '3.18.3'
+  const versionUnibest = (await getUnibestVersion()) || '4.0.0'
 
   intro(bold(green(`create-unibest@v${version} 快速创建 ${yellow(`unibest@v${versionUnibest}`)} 项目`)))
 
