@@ -4,28 +4,27 @@ import os from 'os'
 import crypto from 'crypto'
 import packageJSON from '../../package.json'
 import getUnibestVersion from './unibestVersion'
+import { PromptResult } from '../types'
 
 /**
  * 发送统计数据到服务器
- * @param template - 使用的模板名称
- * @param duration - 操作持续时间
+ * @param options - 项目配置选项
  */
-export async function beacon(template: string, duration: string) {
+export async function beacon(options: PromptResult) {
   try {
     const unibestVersion = await getUnibestVersion()
     const deviceIdentifier = generateDeviceIdentifier()
 
-    await fetch('https://ukw0y1.laf.run/create-unibest/beacon', {
+    await fetch('https://ukw0y1.laf.run/create-unibest/beacon2', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        template,
-        unibestVersion,
-        createUnibestVersion: packageJSON.version,
-        duration,
-        time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        ...options,
+        version: unibestVersion,
+        cbVersion: packageJSON.version,
+        createAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
         nodeVersion: process.version,
         osPlatform: process.platform,
         cpuModel: os.cpus()[0]?.model || 'unknown',

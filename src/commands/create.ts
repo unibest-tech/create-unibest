@@ -8,6 +8,7 @@ import { intro, log } from '@clack/prompts'
 import { bold, yellow, green } from 'kolorist'
 import getUnibestVersion from '../utils/unibestVersion'
 import { checkProjectNameExistAndValidate } from '../utils/validate'
+import { beacon } from '../utils/beacon'
 
 /**
  * 创建项目命令
@@ -34,6 +35,8 @@ export async function createCommand(args: minimist.ParsedArgs): Promise<void> {
 
     // 生成项目
     await generateProject(projectOptions)
+
+    beacon(projectOptions)
   } catch (error) {
     log.error(`创建项目失败: ${(error as Error).message}`)
     process.exit(1)
