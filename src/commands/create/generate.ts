@@ -50,7 +50,7 @@ export async function generateProject(options: PromptResult) {
     log.success(`项目${projectName}创建成功！`)
     logger.info('下一步:')
     logger.info(`  cd ${projectName}`)
-    logger.info('  pnpm install')
+    logger.info('  pnpm i')
     logger.info('  pnpm dev')
     logger.info('  运行完以上命令后，再运行其他平台')
     logger.info('  如：pnpm dev:mp, pnpm dev:app 等')
