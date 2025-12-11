@@ -49,6 +49,7 @@ export const UI_LIBRARY_CONFIGS: Record<UILibrary, UILibraryConfig | null> = {
       path: 'sard-uniapp/components/$1/$1.vue',
     },
     types: ['sard-uniapp/global'],
+    appVueImport: "@import 'sard-uniapp/index.scss';",
   },
   'uview-pro': {
     packageName: 'uview-pro',
