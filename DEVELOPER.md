@@ -22,6 +22,7 @@
 ## 发布
 
 ```sh
+# 首先先更新 package.json 中的 version 版本号
 - npm run build
 - npm login  # 注意切换 npm 原
 - npm publish
