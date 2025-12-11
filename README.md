@@ -26,6 +26,7 @@ npm update -g create-unibest      # 更新 create-unibest 包
 
 ```shell
 best <command> [options]          # 基本命令格式
+best my-project                   # 创建新的unibest项目
 best new my-project               # 创建新的unibest项目
 best -v                           # 查看版本信息
 best -h                           # 查看帮助信息
@@ -35,6 +36,7 @@ best -h                           # 查看帮助信息
 
 ```shell
 pnpm create unibest <command> [options]              # 基本命令格式
+pnpm create unibest my-project                       # 创建新的unibest项目
 pnpm create unibest new my-project                   # 创建新的unibest项目
 pnpm create unibest -v                               # 查看版本信息
 pnpm create unibest -h                               # 查看帮助信息
