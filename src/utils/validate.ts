@@ -5,12 +5,12 @@ import { join } from 'path'
 
 /**
  * 验证项目名称是否符合规范
- * npm包命名规则：只能包含小写字母、数字、连字符和下划线，且不能以连字符开头或结尾
+ * 项目名称规则：只能包含大小写字母、数字、连字符和下划线，且不能以连字符开头或结尾
  * @param name - 项目名称
  * @returns 是否有效
  */
 export function validateProjectName(name: string): boolean {
-  const reg = /^[a-z0-9_-]+$/
+  const reg = /^[a-zA-Z0-9_-]+$/
   if (!reg.test(name)) {
     return false
   }
