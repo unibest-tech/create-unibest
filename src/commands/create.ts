@@ -14,7 +14,7 @@ import { beacon } from '../utils/beacon'
  * 创建项目命令
  */
 export async function createCommand(args: minimist.ParsedArgs): Promise<void> {
-  const projectName = args._[1]
+  const projectName = args._[1] || args._[0] // 不使用 new 关键字也可以直接创建项目
 
   const versionUnibest = (await getUnibestVersion()) || '4.0.0'
 

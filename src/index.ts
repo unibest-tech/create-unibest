@@ -39,10 +39,8 @@ function main() {
       printVersion()
       break
     default:
-      if (command) {
-        console.log(color.red(`未知命令: ${command}`))
-      }
-      printHelp()
+      // 不使用 new 关键字也可以直接创建项目
+      createCommand(args)
       break
   }
 }
