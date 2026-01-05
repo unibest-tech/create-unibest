@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import os from 'os'
 import crypto from 'crypto'
 import packageJSON from '../../package.json'
-import getUnibestVersion from './unibestVersion'
+import { getUnibestVersionFromGithub as getUnibestVersion } from './unibestVersion'
 import { PromptResult } from '../types'
 import { debug } from './debug'
 

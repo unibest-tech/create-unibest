@@ -4,7 +4,7 @@ import minimist from 'minimist'
 import { createCommand } from './commands/create'
 import { printHelp } from './utils/help'
 import { debug } from './utils/debug' // 导入我们的debug工具函数
-import getUnibestVersion from './utils/unibestVersion'
+import { getUnibestVersionFromGithub } from './utils/unibestVersion'
 import { version } from '../package.json'
 import { color } from './utils/color'
 import { green, red } from 'kolorist'
@@ -49,12 +49,16 @@ function main() {
  * 打印版本信息
  */
 async function printVersion() {
-  console.log(green(`create-unibest: `) + yellow(version))
-  try {
-    const unibestVersion = await getUnibestVersion()
-    console.log(green(`unibest: `) + yellow(unibestVersion || '1.0.0'))
-  } catch (error) {
-    console.log(green(`unibest: 未能获取到版本号`))
+  const cliVersion = version
+  const latestVersion = await getUnibestVersionFromGithub()
+
+  if (latestVersion && latestVersion !== cliVersion) {
+    console.log(`unibest-cli ${cliVersion} ${yellow(`->`)} ${green(`最新版本: ${latestVersion}`)}`)
+    console.log(`使用 ${green(`npm update -g create-unibest`)} 或 ${green(`pnpm add -g create-unibest`)} 更新`)
+    console.log()
+  } else {
+    console.log(`unibest-cli ${cliVersion}`)
+    console.log()
   }
 }
 
