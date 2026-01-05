@@ -7,9 +7,9 @@ import os from 'os'
 const CACHE_EXPIRY_TIME = 4 * 60 * 60 * 1000
 
 /**
- * Gitee API 返回的文件响应接口
+ * 仓库文件响应接口（适用于Gitee和GitHub API）
  */
-interface GiteeFileResponse {
+interface RepoFileResponse {
   content: string
   encoding: string
 }
@@ -68,13 +68,13 @@ async function writeCacheToFile(cache: VersionCache): Promise<void> {
 }
 
 /**
- * 获取 unibest 仓库的最新版本号（带持久化缓存机制）
- * - 优先尝试从文件缓存中读取（1小时内有效）
+ * 获取 unibest 仓库的最新版本号（从Gitee获取，带持久化缓存机制）
+ * - 优先尝试从文件缓存中读取（4小时内有效）
  * - 缓存不存在或过期时请求Gitee API获取最新版本
  * - 缓存会持久化到文件系统，在多次命令调用间保持
  * @returns 版本号字符串或 null（如果获取失败）
  */
-async function getUnibestVersion(): Promise<string | null> {
+async function getUnibestVersionFromGitee(): Promise<string | null> {
   const now = Date.now()
 
   // 尝试从文件系统读取缓存
@@ -93,7 +93,70 @@ async function getUnibestVersion(): Promise<string | null> {
     })
 
     if (response.ok) {
-      const data = (await response.json()) as GiteeFileResponse
+      const data = (await response.json()) as RepoFileResponse
+      const { content, encoding } = data
+
+      if (encoding === 'base64') {
+        // 使用 Node.js 内置的 Buffer 解码 base64 内容
+        const decodedContent = Buffer.from(content, 'base64').toString('utf8')
+        const packageJson = JSON.parse(decodedContent)
+        const version = packageJson.version || null
+
+        // 创建新的缓存数据
+        const newCache: VersionCache = {
+          version,
+          timestamp: now,
+        }
+
+        // 异步写入缓存到文件系统（不阻塞主流程）
+        void writeCacheToFile(newCache)
+
+        return version
+      } else {
+        // console.error(`Unsupported encoding: ${encoding}`);
+        return null
+      }
+    } else {
+      // console.error(`Request failed with status: ${response.status}`);
+      // 即使API请求失败，如果有缓存也可以返回过期的缓存作为降级方案
+      return cachedData?.version || null
+    }
+  } catch (error) {
+    // console.error(`An error occurred: ${error}`);
+    // 异常情况下也可以返回过期的缓存作为降级方案
+    return cachedData?.version || null
+  }
+}
+
+/**
+ * 获取 unibest 仓库的最新版本号（从GitHub获取，带持久化缓存机制）
+ * - 优先尝试从文件缓存中读取（4小时内有效）
+ * - 缓存不存在或过期时请求GitHub API获取最新版本
+ * - 缓存会持久化到文件系统，在多次命令调用间保持
+ * @returns 版本号字符串或 null（如果获取失败）
+ */
+async function getUnibestVersionFromGithub(): Promise<string | null> {
+  const now = Date.now()
+
+  // 尝试从文件系统读取缓存
+  const cachedData = await readCacheFromFile()
+  if (cachedData && now - cachedData.timestamp < CACHE_EXPIRY_TIME) {
+    return cachedData.version
+  }
+
+  try {
+    const apiUrl = `https://api.github.com/repos/feige996/unibest/contents/package.json?ref=main`
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // GitHub API 要求 User-Agent 头
+        'User-Agent': 'unibest-cli',
+      },
+    })
+
+    if (response.ok) {
+      const data = (await response.json()) as RepoFileResponse
       const { content, encoding } = data
 
       if (encoding === 'base64') {
@@ -140,4 +203,7 @@ export async function clearVersionCache(): Promise<void> {
   }
 }
 
-export default getUnibestVersion
+// 默认导出仍使用Gitee版本以保持向后兼容
+export default getUnibestVersionFromGithub
+// 同时导出两个版本获取函数，以便用户可以选择使用哪个
+export { getUnibestVersionFromGitee, getUnibestVersionFromGithub }

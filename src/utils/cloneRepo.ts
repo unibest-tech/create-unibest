@@ -10,7 +10,7 @@ async function removeGitFolder(localPath: string): Promise<void> {
   await fs.rm(gitFolderPath, { recursive: true, force: true })
 }
 
-const REPO_URL = 'https://gitee.com/feige996/unibest.git'
+const REPO_URL = 'https://github.com/unibest-tech/unibest.git'
 
 async function cloneRepo(projectName: string, branch: string): Promise<void> {
   try {
