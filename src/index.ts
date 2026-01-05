@@ -23,6 +23,10 @@ function main() {
     printVersion()
     return
   }
+  if (args.h || args.help) {
+    printHelp()
+    return
+  }
 
   // 根据命令执行不同的功能
   switch (command) {
