@@ -6,7 +6,7 @@ import { generateProject } from './create/generate'
 import { version } from '../../package.json'
 import { intro, log } from '@clack/prompts'
 import { bold, yellow, green } from 'kolorist'
-import { getUnibestVersionFromGithub as getUnibestVersion } from '../utils/unibestVersion'
+import { getUnibestVersionFromGitee as getUnibestVersion } from '../utils/unibestVersion'
 import { checkProjectNameExistAndValidate } from '../utils/validate'
 import { beacon } from '../utils/beacon'
 

@@ -4,7 +4,7 @@ import minimist from 'minimist'
 import { createCommand } from './commands/create'
 import { printHelp } from './utils/help'
 import { debug } from './utils/debug' // 导入我们的debug工具函数
-import { getUnibestVersionFromGithub } from './utils/unibestVersion'
+import { getUnibestVersionFromGitee as getUnibestVersion } from './utils/unibestVersion'
 import { version } from '../package.json'
 import { color } from './utils/color'
 import { green, red } from 'kolorist'
@@ -54,7 +54,7 @@ function main() {
  */
 async function printVersion() {
   const cliVersion = version
-  const latestVersion = await getUnibestVersionFromGithub()
+  const latestVersion = await getUnibestVersion()
 
   if (latestVersion && latestVersion !== cliVersion) {
     console.log(`unibest-cli ${cliVersion} ${yellow(`->`)} ${green(`最新版本: ${latestVersion}`)}`)
