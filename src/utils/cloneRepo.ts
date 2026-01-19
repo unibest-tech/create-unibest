@@ -4,6 +4,8 @@ import { join } from 'node:path'
 import process from 'node:process'
 import { bold, red } from 'kolorist'
 import { replacePackageJson } from './replacePackageJson'
+import { getUnibestVersionFromGitee } from './unibestVersion'
+import type { PromptResult } from '../types'
 
 async function removeGitFolder(localPath: string): Promise<void> {
   const gitFolderPath = join(localPath, '.git')
@@ -39,7 +41,7 @@ async function cloneRepo(projectName: string, branch: string): Promise<void> {
   }
 }
 
-export async function cloneRepoByBranch(root: string, name: string, branch: string) {
+export async function cloneRepoByBranch(root: string, name: string, branch: string, options: PromptResult) {
   try {
     await cloneRepo(name, branch)
   } catch (error) {
@@ -47,8 +49,11 @@ export async function cloneRepoByBranch(root: string, name: string, branch: stri
     process.exit(1)
   }
 
+  // 获取 unibest 版本
+  const unibestVersion = (await getUnibestVersionFromGitee()) || 'unknown'
+
   // 替换package.json中的项目名称和version
   // 注意：package.json位于克隆的项目目录中，因此需要拼接正确的路径
   const projectPath = join(root, name)
-  replacePackageJson(projectPath, name, '1.0.0')
+  replacePackageJson(projectPath, name, '1.0.0', unibestVersion, options)
 }

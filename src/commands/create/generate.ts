@@ -18,16 +18,16 @@ export async function generateProject(options: PromptResult) {
 
   if (!loginStrategy && !i18n) {
     debug('拉取 base 分支')
-    await cloneRepoByBranch(root, projectName, 'base')
+    await cloneRepoByBranch(root, projectName, 'base', options)
   } else if (!loginStrategy && i18n) {
     debug('拉取 base-i18n 分支')
-    await cloneRepoByBranch(root, projectName, 'base-i18n')
+    await cloneRepoByBranch(root, projectName, 'base-i18n', options)
   } else if (loginStrategy && !i18n) {
     debug('拉取 base-login 分支')
-    await cloneRepoByBranch(root, projectName, 'base-login')
+    await cloneRepoByBranch(root, projectName, 'base-login', options)
   } else if (loginStrategy && i18n) {
     debug('拉取 base-login-i18n 分支')
-    await cloneRepoByBranch(root, projectName, 'base-login-i18n')
+    await cloneRepoByBranch(root, projectName, 'base-login-i18n', options)
   }
   // 平台相关代码的处理（暂不处理）
 
