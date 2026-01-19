@@ -32,6 +32,24 @@ best -v                           # 查看版本信息
 best -h                           # 查看帮助信息
 ```
 
+### 命令行参数
+
+支持通过命令行参数跳过交互式询问，实现静默/快捷创建。
+
+| 参数 | 简写 | 说明 | 可选值 / 示例 |
+| :--- | :--- | :--- | :--- |
+| `--platform` | `-p` | 指定平台 | `h5`, `mp-weixin`, `app`, `mp-alipay`, `mp-toutiao`<br>示例: `-p h5,mp-weixin` 或 `-p h5 -p mp-weixin` |
+| `--ui` | `-u` | 指定 UI 库 | `wot-ui`, `uview-pro`, `sard-uniapp`, `uv-ui`, `uview-plus`, `none` |
+| `--login` | `-l` | 启用登录策略 | 无值，存在即开启 |
+| `--i18n` | `-i` | 启用多语言 | 无值，存在即开启 |
+
+#### 示例
+
+```bash
+# 创建一个包含 H5 和微信小程序、使用 wot-ui、带登录逻辑和多语言的项目
+best my-project -p h5,mp-weixin -u wot-ui -l -i
+```
+
 ### 临时使用
 
 ```shell

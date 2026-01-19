@@ -2,7 +2,12 @@ import { text, multiselect, select, confirm, cancel, isCancel } from '@clack/pro
 import { logger } from '../../utils/logger'
 import type { PromptResult, Platform, UILibrary, RequestLibrary, FormatPlugin, TokenStrategy } from '../../types'
 import { checkProjectNameExistAndValidate } from '../../utils/validate'
-import { green } from 'kolorist'
+import { green, red } from 'kolorist'
+import process from 'node:process'
+
+// 定义常量以便复用和校验
+const VALID_PLATFORMS = ['h5', 'mp-weixin', 'app', 'mp-alipay', 'mp-toutiao']
+const VALID_UI_LIBRARIES = ['none', 'wot-ui', 'uview-pro', 'sard-uniapp', 'uv-ui', 'uview-plus']
 
 /**
  * 交互式询问用户项目配置
@@ -11,6 +16,55 @@ import { green } from 'kolorist'
  * @returns 用户选择的项目配置
  */
 export async function promptUser(projectName?: string, argv: Record<string, any> = {}): Promise<PromptResult> {
+  // 解析命令行参数
+  let platforms: Platform[] | undefined
+  let uiLibrary: UILibrary | undefined
+  let loginStrategy: boolean | undefined
+  let i18n: boolean | undefined
+
+  // 1. 解析 Platform
+  const platformArg = argv.p || argv.platform
+  if (platformArg) {
+    let parsedPlatforms: string[] = []
+    if (Array.isArray(platformArg)) {
+      // -p h5 -p mp-weixin
+      parsedPlatforms = platformArg
+    } else if (typeof platformArg === 'string') {
+      // -p h5,mp-weixin
+      parsedPlatforms = platformArg.split(',')
+    }
+
+    // 校验
+    const invalidPlatforms = parsedPlatforms.filter(p => !VALID_PLATFORMS.includes(p))
+    if (invalidPlatforms.length > 0) {
+      console.error(red(`无效的平台参数: ${invalidPlatforms.join(', ')}`))
+      console.error(red(`可选值: ${VALID_PLATFORMS.join(', ')}`))
+      process.exit(1)
+    }
+    platforms = parsedPlatforms as Platform[]
+  }
+
+  // 2. 解析 UI Library
+  const uiArg = argv.u || argv.ui
+  if (uiArg) {
+    if (!VALID_UI_LIBRARIES.includes(uiArg)) {
+      console.error(red(`无效的UI库参数: ${uiArg}`))
+      console.error(red(`可选值: ${VALID_UI_LIBRARIES.join(', ')}`))
+      process.exit(1)
+    }
+    uiLibrary = uiArg as UILibrary
+  }
+
+  // 3. 解析 Login Strategy
+  if (argv.l || argv.login) {
+    loginStrategy = true
+  }
+
+  // 4. 解析 i18n
+  if (argv.i || argv.i18n) {
+    i18n = true
+  }
+
   try {
     // 1. 项目名称（如果未通过命令行提供）
     if (!projectName) {
@@ -35,67 +89,79 @@ export async function promptUser(projectName?: string, argv: Record<string, any>
     }
 
     // 2. 选择平台（多选）
-    const platforms = await multiselect({
-      message: `请选择需要支持的平台（多选）${green('[脚手架将根据所选平台生成对应的平台代码，请根据实际情况选择]')}`,
-      options: [
-        { value: 'h5', label: 'H5' },
-        { value: 'mp-weixin', label: '微信小程序' },
-        { value: 'app', label: 'APP' },
-        { value: 'mp-alipay', label: '支付宝小程序（包含钉钉）' },
-        { value: 'mp-toutiao', label: '抖音小程序' },
-      ],
-      initialValues: ['h5'], // 默认选择 H5
-      required: true,
-    })
+    if (!platforms) {
+      const selectedPlatforms = await multiselect({
+        message: `请选择需要支持的平台（多选）${green('[脚手架将根据所选平台生成对应的平台代码，请根据实际情况选择]')}`,
+        options: [
+          { value: 'h5', label: 'H5' },
+          { value: 'mp-weixin', label: '微信小程序' },
+          { value: 'app', label: 'APP' },
+          { value: 'mp-alipay', label: '支付宝小程序（包含钉钉）' },
+          { value: 'mp-toutiao', label: '抖音小程序' },
+        ],
+        initialValues: ['h5'], // 默认选择 H5
+        required: true,
+      })
 
-    // 处理用户取消操作
-    if (isCancel(platforms)) {
-      cancel('操作已取消')
-      process.exit(0)
+      // 处理用户取消操作
+      if (isCancel(selectedPlatforms)) {
+        cancel('操作已取消')
+        process.exit(0)
+      }
+      platforms = selectedPlatforms as Platform[]
     }
 
     // 3. 选择UI库（单选）
-    const uiLibrary = await select({
-      message: '请选择UI库',
-      options: [
-        { value: 'none', label: '无UI库' },
-        { value: 'wot-ui', label: 'wot-ui' },
-        { value: 'uview-pro', label: 'uview-pro' },
-        { value: 'sard-uniapp', label: 'sard-uniapp' },
-        { value: 'uv-ui', label: 'uv-ui' },
-        { value: 'uview-plus', label: 'uview-plus' },
-      ],
-      initialValue: 'none',
-    })
+    if (!uiLibrary) {
+      const selectedUiLibrary = await select({
+        message: '请选择UI库',
+        options: [
+          { value: 'none', label: '无UI库' },
+          { value: 'wot-ui', label: 'wot-ui' },
+          { value: 'uview-pro', label: 'uview-pro' },
+          { value: 'sard-uniapp', label: 'sard-uniapp' },
+          { value: 'uv-ui', label: 'uv-ui' },
+          { value: 'uview-plus', label: 'uview-plus' },
+        ],
+        initialValue: 'none',
+      })
 
-    // 处理用户取消操作
-    if (isCancel(uiLibrary)) {
-      cancel('操作已取消')
-      process.exit(0)
+      // 处理用户取消操作
+      if (isCancel(selectedUiLibrary)) {
+        cancel('操作已取消')
+        process.exit(0)
+      }
+      uiLibrary = selectedUiLibrary as UILibrary
     }
 
     // 4. 是否需要”登录策略“
-    const loginStrategy = await confirm({
-      message: `是否需要登录策略（黑白名单、登录拦截等）？${green('[暂不知道的，选No即可，项目生成后也可以加该策略]')}`,
-      initialValue: false,
-    })
+    if (loginStrategy === undefined) {
+      const selectedLoginStrategy = await confirm({
+        message: `是否需要登录策略（黑白名单、登录拦截等）？${green('[暂不知道的，选No即可，项目生成后也可以加该策略]')}`,
+        initialValue: false,
+      })
 
-    // 处理用户取消操作
-    if (isCancel(loginStrategy)) {
-      cancel('操作已取消')
-      process.exit(0)
+      // 处理用户取消操作
+      if (isCancel(selectedLoginStrategy)) {
+        cancel('操作已取消')
+        process.exit(0)
+      }
+      loginStrategy = selectedLoginStrategy as boolean
     }
 
     // 5. 是否启用多语言（确认）
-    const i18n = await confirm({
-      message: '是否需要多语言i18n？',
-      initialValue: false,
-    })
+    if (i18n === undefined) {
+      const selectedI18n = await confirm({
+        message: '是否需要多语言i18n？',
+        initialValue: false,
+      })
 
-    // 处理用户取消操作
-    if (isCancel(i18n)) {
-      cancel('操作已取消')
-      process.exit(0)
+      // 处理用户取消操作
+      if (isCancel(selectedI18n)) {
+        cancel('操作已取消')
+        process.exit(0)
+      }
+      i18n = selectedI18n as boolean
     }
 
     // 6. 选择请求库（单选）
